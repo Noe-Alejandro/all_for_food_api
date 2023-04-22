@@ -3,6 +3,9 @@ const router = express.Router();
 const commentController = require('../../controllers/commentController');
 
 router
-    .get("/:recipeId", commentController.getAllComment);
+    .get("/:recipeId/:userId?", commentController.getAllComment)
+    .post("/", commentController.postComment)
+    .put("/:commentId", commentController.putComment)
+    .delete("/:commentId", commentController.deleteComment);
 
 module.exports = router;

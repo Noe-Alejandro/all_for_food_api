@@ -17,7 +17,7 @@ const Comment = sequelize.define("comment",
             allowNull: false
         },
         comment: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: false
         },
         createdAt: {
