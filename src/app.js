@@ -7,6 +7,6 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 app.use("/api/v1/comment", v1CommentRouter);
 
-app.listen(PORT, () =>{
+app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });

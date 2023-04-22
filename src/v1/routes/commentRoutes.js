@@ -3,6 +3,6 @@ const router = express.Router();
 const commentController = require('../../controllers/commentController');
 
 router
-.get("/", commentController.getAllComment);
+    .get("/:recipeId", commentController.getAllComment);
 
 module.exports = router;

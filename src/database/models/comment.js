@@ -3,6 +3,11 @@ const sequelize = require('../db');
 
 const Comment = sequelize.define("comment",
     {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
         recipeId: {
             type: DataTypes.INTEGER,
             allowNull: false
@@ -29,7 +34,5 @@ const Comment = sequelize.define("comment",
     tableName: "comment",
     timestamps: false
 });
-
-Comment.removeAttribute('id');
 
 module.exports = Comment;
