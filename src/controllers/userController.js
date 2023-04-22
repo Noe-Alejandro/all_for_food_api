@@ -60,4 +60,29 @@ const putUSer = (req, res) => {
     }
 }
 
-module.exports = { getAllUser, postUser, putUSer};
+const deleteUser = (req, res) => {
+    try {
+        var body = req.body;
+        var id = req.params.id;
+
+        Validator.ValidateId(id, "El id del usuario es inválido");
+
+        return userService.deleteUser(id, body).then(affectedRow => {
+            if (affectedRow == null) {
+                res
+                    .status(statusCode.OK)
+                    .json(success("No se encontró un usuario con el id proporcionado", null, statusCode.OK));
+            } else {
+                res
+                    .status(statusCode.OK)
+                    .json(success("OK", affectedRow, statusCode.OK));
+            }
+        });
+    } catch (e) {
+        HandlerException(e, res)
+    }
+}
+
+
+
+module.exports = { getAllUser, postUser, putUSer, deleteUser};

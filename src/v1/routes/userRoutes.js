@@ -6,5 +6,6 @@ router
     .get("/:id", userController.getAllUser)
     .post("/", userController.postUser)
     .put("/:id", userController.putUSer)
+    .put("/delete/:id", userController.deleteUser) //delete user
 
 module.exports = router;
