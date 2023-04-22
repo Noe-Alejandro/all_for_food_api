@@ -72,4 +72,26 @@ const updateRecipe = (req, res) => {
     }
 };
 
-module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe };
+const deleteRecipe = (req, res) => {
+    try {
+        var recipeId = req.body.recipeId;
+
+        Validator(recipeId, "El id de la receta es inválido");
+
+        return recipeService.deleteRecipe(recipeId).then(deletedRow => {
+            if (deletedRow == null) {
+                res
+                    .status(statusCode.OK)
+                    .json(success("Receta a desactivar no encontrada", null, statusCode.OK));
+            } else {
+                res
+                    .status(statusCode.OK)
+                    .json(success("OK", deletedRow, statusCode.OK));
+            }
+        })
+    } catch (e) {
+        HandlerException(e, res);
+    }
+}
+
+module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe, deleteRecipe };

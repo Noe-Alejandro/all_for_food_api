@@ -14,7 +14,8 @@ const postRecipe = (req) => {
         steps: req.steps,
         rate: req.rate,
         createdAt: Date.now(),
-        modifiedAt: Date.now()
+        modifiedAt: Date.now(),
+        status: 1
     }).then(recipe => {
         return recipe;
     })
@@ -26,7 +27,11 @@ const postRecipe = (req) => {
  * @returns all recipes in DB.
  */
 const getAllRecipe = () => {
-    return Recipe.findAll().then(recipes => {
+    return Recipe.findAll({
+        where: {
+            status: 1
+        }
+    }).then(recipes => {
         return JSON.parse(JSON.stringify(recipes, null, 2));
     });
 }
@@ -34,10 +39,16 @@ const getAllRecipe = () => {
 /**
  * 
  * @param {number} recipeId : Identification number of the recipe to find.
- * @returns the recipe asociated to the recipeId
+ * @returns the recipe asociated to the recipeId if it's activated
  */
 const getRecipeById = (recipeId => {
-    return Recipe.findByPk(recipeId).then(recipe => {
+    return Recipe.findOne({
+        where: {
+            recipeId: recipeId,
+            status: 1
+        }
+    }
+    ).then(recipe => {
         return JSON.parse(JSON.stringify(recipe, null, 2));
     })
 });
@@ -49,7 +60,12 @@ const getRecipeById = (recipeId => {
  * @returns the updated recipe
  */
 const updateRecipe = async (recipeId, req) => {
-    const recipe = await Recipe.findByPk(recipeId);
+    const recipe = await Recipe.findOne({
+        where:{
+            recipeId: recipeId,
+            status: 1
+        }
+    });
     if (!recipe) {
         return null;
     }
@@ -82,4 +98,4 @@ const deleteRecipe = (recipeId => {
     })
 })
 
-module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe };
+module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe, deleteRecipe };
