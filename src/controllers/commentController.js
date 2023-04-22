@@ -1,12 +1,14 @@
-const { success, error, validation } = require("../utils/helpers/baseResponse");
+const { success, successPage } = require("../utils/helpers/baseResponse");
 const { Validator } = require('../utils/helpers/validator');
 const { HandlerException } = require('../utils/helpers/errorHandler');
+const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
 
 const statusCode = require('../utils/helpers/statusCode');
 const commentService = require('../services/commentService');
 
 const getAllComment = (req, res) => {
     try {
+        var pagination = GetConfigPagination(req);
         var recipeId = req.params.recipeId;
         var userId = req.params.userId
 
@@ -14,11 +16,10 @@ const getAllComment = (req, res) => {
         if (userId)
             Validator.ValidateId(userId, "El id del usuario es inválido")
 
-        return commentService.getAllComment(recipeId, userId).then(comments => {
-
+        return commentService.getAllComment(recipeId, pagination).then(result => {
             res
                 .status(statusCode.OK)
-                .json(success("OK", comments, statusCode.OK));
+                .json(successPage("OK", result.data, statusCode.OK, pagination.header, result.totalPage));
         });
     } catch (e) {
         HandlerException(e, res);

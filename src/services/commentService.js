@@ -1,27 +1,18 @@
-const { response } = require('express');
 const Comment = require('../database/models/comment');
 
-const getAllComment = (recipeId, userId = null) => {
-    return Comment.findAll({
+const getAllComment = async (recipeId, pagination) => {
+    const amount = await Comment.count({
+        where: {
+            recipeId: recipeId
+        }
+    });
+
+    return Comment.findAll(pagination.options, {
         where: {
             recipeId: recipeId
         }
     }).then(comments => {
-        var commentsObject = JSON.parse(JSON.stringify(comments, null, 2));
-        var myComments = [];
-        if (userId != null) {
-            myComments = commentsObject.filter(function (comment) {
-                return comment.userId == userId;
-            });
-            comments = commentsObject.filter(function (comment) {
-                return comment.userId != userId;
-            });
-        }
-        return myComments.length > 0 ? JSON.parse(JSON.stringify(
-            {
-                myComments: myComments,
-                comments: comments
-            }, null, 2)) : JSON.parse(JSON.stringify({ comments: comments }, null, 2));
+        return JSON.parse(JSON.stringify({ data: comments, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });
 };
 
