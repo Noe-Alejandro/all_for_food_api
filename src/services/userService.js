@@ -26,5 +26,35 @@ const postUser= (req) => {
     });
 };
 
+const putUser = async (id, req) => {
+    const userEntity = await User.findOne({
+        where: {
+            id: id
+        }
+    });
 
-module.exports = { getAllUser, postUser };
+    if (!userEntity) {
+        return null;
+    }
+
+    return User.update(
+        {
+            username: req.username,
+            email: req.email,
+            password: req.password,
+            icon: req.icon,
+            description: req.description,
+            modifiedAt: Date.now()
+        },
+        {
+            where: {
+                id: id
+            }
+        }).then(result => {
+            return result[0]
+        }
+        );
+}
+
+
+module.exports = { getAllUser, postUser, putUser};
