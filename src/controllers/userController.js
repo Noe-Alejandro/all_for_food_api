@@ -23,4 +23,18 @@ const getAllUser = (req, res) => {
     }
 };
 
-module.exports = { getAllUser };
+const postUser = (req, res) => {
+    try {
+        var body = req.body;
+
+        return userService.postUser(body).then(user => {
+            res
+                .status(statusCode.Created)
+                .json(success("Created", user, statusCode.Created));
+        });
+    } catch (e) {
+        HandlerException(e, res)
+    }
+}
+
+module.exports = { getAllUser, postUser};

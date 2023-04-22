@@ -11,4 +11,20 @@ const getAllUser = (id) => {
     });
 }
 
-module.exports = { getAllUser };
+const postUser= (req) => {
+    return User.create({
+        username: req.username,
+        email: req.email,
+        password: req.password,
+        icon: req.icon,
+        description: req.description,
+        createdAt: Date.now(),
+        modifiedAt: Date.now(),
+        status: 1,
+    }).then(user => {
+        return user;
+    });
+};
+
+
+module.exports = { getAllUser, postUser };
