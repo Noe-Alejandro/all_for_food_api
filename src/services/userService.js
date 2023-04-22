@@ -82,6 +82,32 @@ const deleteUser = async (id) => {
         );
 }
 
+const reactiveUser = async (id) => {
+    const userEntity = await User.findOne({
+        where: {
+            id: id
+        }
+    });
+
+    if (!userEntity) {
+        return null;
+    }
+
+    return User.update(
+        {
+            status: 1,
+            modifiedAt: Date.now()
+        },
+        {
+            where: {
+                id: id
+            }
+        }).then(result => {
+            return result
+        }
+        );
+}
 
 
-module.exports = { getAllUser, postUser, putUser, deleteUser};
+
+module.exports = { getAllUser, postUser, putUser, deleteUser, reactiveUser};
