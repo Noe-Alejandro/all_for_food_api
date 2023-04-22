@@ -17,11 +17,11 @@ const User = sequelize.define("user",
             allowNull: false
         },
         password: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT('long'),
             allowNull: false
         },
         icon: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT('long'),
             allowNull: false
         },
         description: {
