@@ -3,7 +3,19 @@ exports.success = (message, results, statusCode) => {
         message,
         error: false,
         code: statusCode,
-        results
+        data
+    };
+};
+
+exports.successPage = (message, results, statusCode, options, totalPage) => {
+    return {
+        message,
+        error: false,
+        code: statusCode,
+        totalPage: totalPage,
+        page: (options.page+=1),
+        size: options.size,
+        data: results
     };
 };
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const commentController = require('../../controllers/commentController');
 
 router
-    .get("/:recipeId/:userId?", commentController.getAllComment)
+    .get("/:recipeId", commentController.getAllComment)
     .post("/", commentController.postComment)
     .put("/:commentId", commentController.putComment)
     .delete("/:commentId", commentController.deleteComment);
