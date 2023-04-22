@@ -31,7 +31,6 @@ const putComment = async (id, req) => {
     if (!commentEntity) {
         return null;
     }
-
     return Comment.update(
         {
             comment: req.comment,
@@ -47,4 +46,26 @@ const putComment = async (id, req) => {
         );
 }
 
-module.exports = { getAllComment, postComment, putComment };
+const deleteComment = async (id) => {
+    const commentEntity = await Comment.findOne({
+        where: {
+            id: id
+        }
+    });
+    if (!commentEntity) {
+        return null;
+    }
+
+    return Comment.destroy(
+        {
+            where: {
+                id: id
+            }
+        }).then(result => {
+            console.log(result);
+            return result
+        }
+        );
+}
+
+module.exports = { getAllComment, postComment, putComment, deleteComment };

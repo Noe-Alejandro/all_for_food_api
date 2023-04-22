@@ -61,4 +61,26 @@ const putComment = (req, res) => {
     }
 }
 
-module.exports = { getAllComment, postComment, putComment };
+const deleteComment = (req, res) => {
+    try {
+        var commentId = req.params.commentId;
+
+        Validator.ValidateId(commentId, "El id del comentario es inválido");
+
+        return commentService.deleteComment(commentId).then(deletedRow => {
+            if (deletedRow == null) {
+                res
+                    .status(statusCode.OK)
+                    .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
+            } else {
+                res
+                    .status(statusCode.OK)
+                    .json(success("OK", deletedRow, statusCode.OK));
+            }
+        });
+    } catch (e) {
+        HandlerException(e, res)
+    }
+}
+
+module.exports = { getAllComment, postComment, putComment, deleteComment };
