@@ -8,10 +8,14 @@ const commentService = require('../services/commentService');
 const getAllComment = (req, res) => {
     try {
         var recipeId = req.params.recipeId;
+        var userId = req.params.userId
 
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
+        if (userId)
+            Validator.ValidateId(userId, "El id del usuario es inválido")
 
-        return commentService.getAllComment(recipeId).then(comments => {
+        return commentService.getAllComment(recipeId, userId).then(comments => {
+
             res
                 .status(statusCode.OK)
                 .json(success("OK", comments, statusCode.OK));
