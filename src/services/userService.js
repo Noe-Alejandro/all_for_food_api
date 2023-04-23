@@ -1,5 +1,6 @@
 const { response } = require('express');
 const User = require('../database/models/user');
+const bcrypt = require("bcryptjs");
 
 const getAllUser = (id) => {
     return User.findAll({
@@ -11,11 +12,11 @@ const getAllUser = (id) => {
     });
 }
 
-const postUser= (req) => {
+const postUser = async(req) => {
     return User.create({
         username: req.username,
         email: req.email,
-        password: req.password,
+        password: await bcrypt.hash(req.password, 10),
         icon: req.icon,
         description: req.description,
         createdAt: Date.now(),
@@ -26,7 +27,7 @@ const postUser= (req) => {
     });
 };
 
-const putUser = async (id, req) => {
+const putUser = async(id, req) => {
     const userEntity = await User.findOne({
         where: {
             id: id
@@ -41,7 +42,7 @@ const putUser = async (id, req) => {
         {
             username: req.username,
             email: req.email,
-            password: req.password,
+            password: await bcrypt.hash(req.password, 10),
             icon: req.icon,
             description: req.description,
             modifiedAt: Date.now()
@@ -110,4 +111,4 @@ const reactiveUser = async (id) => {
 
 
 
-module.exports = { getAllUser, postUser, putUser, deleteUser, reactiveUser};
+module.exports = { getAllUser, postUser, putUser, deleteUser, reactiveUser };
