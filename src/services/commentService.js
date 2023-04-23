@@ -7,11 +7,30 @@ const getAllComment = async (recipeId, pagination) => {
         }
     });
 
-    return Comment.findAll(pagination.options, {
+    return Comment.findAll({
         where: {
             recipeId: recipeId
         }
-    }).then(comments => {
+    }, pagination.options
+    ).then(comments => {
+        return JSON.parse(JSON.stringify({ data: comments, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+    });
+};
+
+const getMyComments = async (recipeId, userId, pagination) => {
+    const amount = await Comment.count({
+        where: {
+            recipeId: recipeId,
+            userId: userId
+        }
+    });
+    return Comment.findAll({
+        where: {
+            recipeId: recipeId,
+            userId: userId
+        }
+    }, pagination.options
+    ).then(comments => {
         return JSON.parse(JSON.stringify({ data: comments, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });
 };
@@ -68,10 +87,9 @@ const deleteComment = async (id) => {
                 id: id
             }
         }).then(result => {
-            console.log(result);
             return result
         }
         );
 }
 
-module.exports = { getAllComment, postComment, putComment, deleteComment };
+module.exports = { getAllComment, postComment, putComment, deleteComment, getMyComments };
