@@ -1,23 +1,31 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
-const Comment = sequelize.define("comment",
+const User = sequelize.define("user",
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        recipeId: {
-            type: DataTypes.INTEGER,
+        username: {
+            type: DataTypes.STRING,
             allowNull: false
         },
-        userId: {
-            type: DataTypes.INTEGER,
+        email: {
+            type: DataTypes.STRING,
             allowNull: false
         },
-        comment: {
-            type: DataTypes.TEXT,
+        password: {
+            type: DataTypes.TEXT('long'),
+            allowNull: false
+        },
+        icon: {
+            type: DataTypes.TEXT('long'),
+            allowNull: false
+        },
+        description: {
+            type: DataTypes.STRING,
             allowNull: false
         },
         createdAt: {
@@ -27,12 +35,16 @@ const Comment = sequelize.define("comment",
         modifiedAt: {
             type: DataTypes.DATE,
             allowNull: false
+        },
+        status: {
+            type: DataTypes.TINYINT,
+            allowNull: false,
         }
     }, {
     sequelize,
-    modelName: "comment",
-    tableName: "comment",
+    modelName: "user",
+    tableName: "user",
     timestamps: false
 });
 
-module.exports = Comment;
+module.exports = User;
