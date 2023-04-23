@@ -21,18 +21,16 @@ const postRecipe = (req) => {
     })
 }
 
-/**
- * 
- * @param {number} lim : the number of recipes to be returned.
- * @returns all recipes in DB.
- */
-const getAllRecipe = () => {
-    return Recipe.findAll({
+
+const getAllRecipe = async (pagination) => {
+    const amount = await Recipe.count();
+
+    return Recipe.findAll( pagination.options, {
         where: {
             status: 1
         }
     }).then(recipes => {
-        return JSON.parse(JSON.stringify(recipes, null, 2));
+        return JSON.parse(JSON.stringify({data: recipes, totalPage: Math.ceil(amount / pagination.header.size)}, null, 2));
     });
 }
 
@@ -84,18 +82,52 @@ const updateRecipe = async (recipeId, req) => {
     }).then(res => {
         return res[0]
     });
-}
+};
 
 /**
  * 
  * @param {number} recipeId : Identification number of the recipe to deactivate/delete.
  */
-const deleteRecipe = (recipeId => {
+const deleteRecipe = async (recipeId) => {
+    const recipe = await Recipe.findOne({
+        where:{
+            recipeId: recipeId,
+            status: 1
+        }
+    });
+
+    if (!recipe) {
+        return null;
+    }
+
     Recipe.update({ status: 0 }, {
         where: {
             recipeId: recipeId
         }
-    })
-})
+    }).then(result => {
+        return result
+    });
+};
 
-module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe, deleteRecipe };
+const reactivateRecipe = async (recipeId) => {
+    const recipe = await Recipe.findOne({
+        where:{
+            recipeId: recipeId,
+            status: 0
+        }
+    });
+
+    if (!recipe) {
+        return null;
+    }
+
+    Recipe.update({ status: 1 }, {
+        where: {
+            recipeId: recipeId
+        }
+    }).then(result => {
+        return result
+    });
+}
+
+module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };

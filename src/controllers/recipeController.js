@@ -1,6 +1,7 @@
 const { success, error, validation } = require("../utils/helpers/baseResponse");
 const { Validator } = require('../utils/helpers/validator');
 const { HandlerException } = require('../utils/helpers/errorHandler');
+const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
 
 const statusCode = require('../utils/helpers/statusCode');
 const recipeService = require('../services/recipeService');
@@ -21,12 +22,14 @@ const postRecipe = (req, res) => {
     }
 };
 
-const getAllRecipe = (res) => {
+const getAllRecipe = (req, res) => {
     try {
-        return recipeService.getAllRecipe.then(recipes => {
+        var pagination = GetConfigPagination(req);
+
+        return recipeService.getAllRecipe(pagination).then(recipes => {
             res
                 .status(statusCode.OK)
-                .json(success("OK", recipes, statusCode.OK));
+                .json(success("OK", recipes.data, statusCode.OK, pagination.header, recipes.totalPage));
         });
     } catch (e) {
         HandlerException(e, res);
@@ -52,9 +55,9 @@ const getRecipeById = (req, res) => {
 const updateRecipe = (req, res) => {
     try {
         var body = req.body;
-        var recipeId = body.recipeId;
+        var recipeId = body.params.recipeId;
 
-        Validator(recipeId, "El id de la receta es inválido");
+        Validator.ValidateId(recipeId, "El id de la receta es inválido");
 
         return recipeService.updateRecipe(recipeId, body).then(updatedRow => {
             if (updatedRow == null) {
@@ -68,17 +71,18 @@ const updateRecipe = (req, res) => {
             }
         });
     } catch (e) {
-        HandlerException(e, res);
+        HandlerException(e, res)
     }
 };
 
 const deleteRecipe = (req, res) => {
     try {
-        var recipeId = req.body.recipeId;
+        var body = req.body;
+        var recipeId = req.params.recipeId;
 
-        Validator(recipeId, "El id de la receta es inválido");
+        Validator.ValidateId(recipeId, "El id de la receta es inválido");
 
-        return recipeService.deleteRecipe(recipeId).then(deletedRow => {
+        return recipeService.deleteRecipe(recipeId, body).then(deletedRow => {
             if (deletedRow == null) {
                 res
                     .status(statusCode.OK)
@@ -88,10 +92,33 @@ const deleteRecipe = (req, res) => {
                     .status(statusCode.OK)
                     .json(success("OK", deletedRow, statusCode.OK));
             }
-        })
+        });
     } catch (e) {
-        HandlerException(e, res);
+        HandlerException(e, res)
     }
-}
+};
 
-module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe, deleteRecipe };
+const reactivateRecipe = (req, res) => {
+    try {
+        var body = req.body;
+        var recipeId = req.params.recipeId;
+
+        Validator.ValidateId(recipeId, "El id de la receta es inválido");
+
+        return recipeService.reactivateRecipe(recipeId, body).then(reactivatedRow =>{
+            if(reactivatedRow == null){
+                res
+                    .status(statusCode.OK)
+                    .json(success("Receta a reactivar no encontrada", null, statusCode.OK));
+            }else{
+                res
+                    .status(statusCode.OK)
+                    .json(success("OK", reactivatedRow, statusCode.OK));
+            }
+        });
+    }catch(e){
+        HandlerException(e);
+    }
+};
+
+module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };

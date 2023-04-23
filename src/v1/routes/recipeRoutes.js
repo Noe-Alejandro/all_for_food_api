@@ -3,10 +3,11 @@ const router = express.Router();
 const recipeController = require('../../controllers/recipeController');
 
 router
-    .post("/", recipeController.postRecipe)
     .get("/", recipeController.getAllRecipe)
     .get("/:recipeId", recipeController.getRecipeById)
+    .post("/", recipeController.postRecipe)
     .put("/:recipeId", recipeController.updateRecipe)
-    .put("/:recipeId", recipeController.deleteRecipe);
+    .put("/delete/:recipeId", recipeController.deleteRecipe)
+    .put("/reactivate/:recipeId", recipeController.reactivateRecipe);
 
 module.exports = router;
