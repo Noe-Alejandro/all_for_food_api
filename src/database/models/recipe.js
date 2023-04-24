@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const User = require('../models/user');
 const sequelize = require('../db');
 
 const Recipe = sequelize.define("recipe",
@@ -12,7 +13,7 @@ const Recipe = sequelize.define("recipe",
             type: DataTypes.INTEGER,
             allowNull: false,
             references:{
-                model: user,
+                model: User,
                 key: 'id'
             }
         },

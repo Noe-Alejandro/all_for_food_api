@@ -31,7 +31,7 @@ const getAllRecipe = async (pagination) => {
         }
     }, pagination.options
     ).then(recipes => {
-        return JSON.parse(JSON.stringify({data: recipes, totalPage: Math.ceil(amount / pagination.header.size)}, null, 2));
+        return JSON.parse(JSON.stringify({ data: recipes, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });
 }
 
@@ -43,7 +43,7 @@ const getAllRecipe = async (pagination) => {
 const getRecipeById = (recipeId => {
     return Recipe.findOne({
         where: {
-            recipeId: recipeId,
+            id: recipeId,
             status: 1
         }
     }
@@ -60,8 +60,8 @@ const getRecipeById = (recipeId => {
  */
 const updateRecipe = async (recipeId, req) => {
     const recipe = await Recipe.findOne({
-        where:{
-            recipeId: recipeId,
+        where: {
+            id: recipeId,
             status: 1
         }
     });
@@ -91,19 +91,20 @@ const updateRecipe = async (recipeId, req) => {
  */
 const deleteRecipe = async (recipeId) => {
     const recipe = await Recipe.findOne({
-        where:{
-            recipeId: recipeId,
+        where: {
+            id: recipeId,
             status: 1
         }
     });
-
+    console.log(recipe.dataValues);
     if (!recipe) {
         return null;
     }
 
-    Recipe.update({ status: 0 }, {
+    return Recipe.update({ status: 0 }, {
         where: {
-            recipeId: recipeId
+            id: recipeId,
+            status: 1
         }
     }).then(result => {
         return result
@@ -112,19 +113,19 @@ const deleteRecipe = async (recipeId) => {
 
 const reactivateRecipe = async (recipeId) => {
     const recipe = await Recipe.findOne({
-        where:{
-            recipeId: recipeId,
+        where: {
+            id: recipeId,
             status: 0
         }
     });
-
     if (!recipe) {
         return null;
     }
 
-    Recipe.update({ status: 1 }, {
+    return Recipe.update({ status: 1 }, {
         where: {
-            recipeId: recipeId
+            id: recipeId,
+            status: 0
         }
     }).then(result => {
         return result
