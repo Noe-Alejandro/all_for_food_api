@@ -25,11 +25,12 @@ const postRecipe = (req) => {
 const getAllRecipe = async (pagination) => {
     const amount = await Recipe.count();
 
-    return Recipe.findAll( pagination.options, {
+    return Recipe.findAll({
         where: {
             status: 1
         }
-    }).then(recipes => {
+    }, pagination.options
+    ).then(recipes => {
         return JSON.parse(JSON.stringify({data: recipes, totalPage: Math.ceil(amount / pagination.header.size)}, null, 2));
     });
 }
