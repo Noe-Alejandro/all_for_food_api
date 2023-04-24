@@ -10,12 +10,10 @@ const postRecipe = (req, res) => {
     try {
         var body = req.body;
 
-        Validator.ValidateId(req.userId, "El id del usuario es inválido");
-
         return recipeService.postRecipe(body).then(recipe => {
             res
                 .status(statusCode.Created)
-                .json(success("OK", recipe, statusCode.OK));
+                .json(success("Created", recipe, statusCode.Created));
         });
     } catch (e) {
         HandlerException(e, res)
@@ -55,7 +53,7 @@ const getRecipeById = (req, res) => {
 const updateRecipe = (req, res) => {
     try {
         var body = req.body;
-        var recipeId = body.params.recipeId;
+        var recipeId = req.params.recipeId;
 
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
 
@@ -77,12 +75,11 @@ const updateRecipe = (req, res) => {
 
 const deleteRecipe = (req, res) => {
     try {
-        var body = req.body;
         var recipeId = req.params.recipeId;
 
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
 
-        return recipeService.deleteRecipe(recipeId, body).then(deletedRow => {
+        return recipeService.deleteRecipe(recipeId).then(deletedRow => {
             if (deletedRow == null) {
                 res
                     .status(statusCode.OK)
@@ -100,23 +97,22 @@ const deleteRecipe = (req, res) => {
 
 const reactivateRecipe = (req, res) => {
     try {
-        var body = req.body;
         var recipeId = req.params.recipeId;
 
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
 
-        return recipeService.reactivateRecipe(recipeId, body).then(reactivatedRow =>{
-            if(reactivatedRow == null){
+        return recipeService.reactivateRecipe(recipeId).then(reactivatedRow => {
+            if (reactivatedRow == null) {
                 res
                     .status(statusCode.OK)
                     .json(success("Receta a reactivar no encontrada", null, statusCode.OK));
-            }else{
+            } else {
                 res
                     .status(statusCode.OK)
                     .json(success("OK", reactivatedRow, statusCode.OK));
             }
         });
-    }catch(e){
+    } catch (e) {
         HandlerException(e);
     }
 };

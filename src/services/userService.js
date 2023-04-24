@@ -38,15 +38,28 @@ const putUser = async(id, req) => {
         return null;
     }
 
-    return User.update(
-        {
+    if(!req.password){
+        value = {
+            username: req.username,
+            email: req.email,
+            icon: req.icon,
+            description: req.description,
+            modifiedAt: Date.now()
+        }
+    }else{
+        value = {
             username: req.username,
             email: req.email,
             password: await bcrypt.hash(req.password, 10),
             icon: req.icon,
             description: req.description,
             modifiedAt: Date.now()
-        },
+        }        
+    }
+
+
+    return User.update(
+        value,
         {
             where: {
                 id: id
