@@ -34,40 +34,17 @@ const getAllIngredient = (req, res) => {
     }
 };
 
-const updateIngredient = (req, res) => {
-    try {
-        var body = req.body;
-        var id = body.params.id;
-
-        Validator.ValidateId(id, "El id del ingrediente es inválido");
-
-        return ingredientService.updateIngredient(id, body).then(updatedRow => {
-            if (updatedRow == null) {
-                res
-                    .status(statusCode.OK)
-                    .json(success("Ingrediente a actualizar no encontrado", null, statusCode.OK));
-            } else {
-                res
-                    .status(statusCode.OK)
-                    .json(success("OK", updatedRow, statusCode.OK));
-            }
-        });
-    } catch (e) {
-        HandlerException(e, res)
-    }
-};
-
 const deleteIngredient = (req, res) => {
     try {
-        var id = req.params.id;
+        var id = req.params.ingredientId;
 
-        Validator.ValidateId(id, "El id del ingrediente es inválido");
+        Validator.ValidateId(id, "El id del comentario es inválido");
 
         return ingredientService.deleteIngredient(id).then(deletedRow => {
             if (deletedRow == null) {
                 res
                     .status(statusCode.OK)
-                    .json(success("ingrediente a desactivar no encontrado", null, statusCode.OK));
+                    .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
             } else {
                 res
                     .status(statusCode.OK)
@@ -77,28 +54,6 @@ const deleteIngredient = (req, res) => {
     } catch (e) {
         HandlerException(e, res)
     }
-};
+}
 
-const reactivateIngredient = (req, res) => {
-    try {
-        var id = req.params.id;
-
-        Validator.ValidateId(id, "El id del ingrediente es inválido");
-
-        return ingredientService.reactivateIngredient(id).then(reactivatedRow =>{
-            if(reactivatedRow == null){
-                res
-                    .status(statusCode.OK)
-                    .json(success("ingrediente a reactivar no encontrado", null, statusCode.OK));
-            }else{
-                res
-                    .status(statusCode.OK)
-                    .json(success("OK", reactivatedRow, statusCode.OK));
-            }
-        });
-    }catch(e){
-        HandlerException(e);
-    }
-};
-
-module.exports = { postIngredient, getAllIngredient, updateIngredient, deleteIngredient, reactivateIngredient};
+module.exports = { postIngredient, getAllIngredient, deleteIngredient };

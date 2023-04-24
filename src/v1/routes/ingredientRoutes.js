@@ -5,7 +5,6 @@ const ingredientController = require('../../controllers/ingredientController');
 router
     .get("/", ingredientController.getAllIngredient)
     .post("/", ingredientController.postIngredient)
-    .put("/delete/:id", ingredientController.deleteIngredient)
-    .put("/reactivate/:id", ingredientController.reactivateIngredient);
+    .delete("/:ingredientId", ingredientController.deleteIngredient);;
 
 module.exports = router;
