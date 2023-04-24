@@ -12,78 +12,34 @@ const postIngredient = (req) => {
 const getAllIngredient = async (pagination) => {
     const amount = await Ingredient.count();
 
-    return Ingredient.findAll( pagination.options, {
+    return Ingredient.findAll(pagination.options, {
         where: {
             status: 1
         }
     }).then(ingredients => {
-        return JSON.parse(JSON.stringify({data: ingredients, totalPage: Math.ceil(amount / pagination.header.size)}, null, 2));
+        return JSON.parse(JSON.stringify({ data: ingredients, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });
 }
-
-const updateIngredient = async (id, req) => {
-    const ingredient = await Ingredient.findOne({
-        where:{
-            id: id,
-            status: 1
-        }
-    });
-    if (!ingredient) {
-        return null;
-    }
-
-    return Ingredient.update(
-        {
-            name: req.name
-        }, {
-        where: {
-            id: id
-        }
-    }).then(res => {
-        return res[0]
-    });
-};
 
 const deleteIngredient = async (id) => {
-    const ingredient = await Ingredient.findOne({
-        where:{
-            id: id,
-            status: 1
-        }
-    });
-
-    if (!ingredient) {
-        return null;
-    }
-
-    Ingredient.update({ status: 0 }, {
+    const ingredientEntity = await Ingredient.findOne({
         where: {
             id: id
         }
-    }).then(result => {
-        return result
     });
-};
-
-const reactivateIngredient = async (id) => {
-    const ingredient = await Ingredient.findOne({
-        where:{
-            id: id,
-            status: 0
-        }
-    });
-
-    if (!ingredient) {
+    if (!ingredientEntity) {
         return null;
     }
 
-    Ingredient.update({ status: 1 }, {
-        where: {
-            id: id
+    return Ingredient.destroy(
+        {
+            where: {
+                id: id
+            }
+        }).then(result => {
+            return result
         }
-    }).then(result => {
-        return result
-    });
+        );
 }
 
-module.exports = { postIngredient, getAllIngredient, updateIngredient, deleteIngredient, reactivateIngredient};
+module.exports = { postIngredient, getAllIngredient, deleteIngredient };
