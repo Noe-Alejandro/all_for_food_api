@@ -10,12 +10,10 @@ const postIngredient = (req, res) => {
     try {
         var body = req.body;
 
-        Validator.ValidateId(req.id, "El id del ingrediente es inválido");
-
         return ingredientService.postIngredient(body).then(ingredient => {
             res
                 .status(statusCode.Created)
-                .json(success("OK", ingredient, statusCode.OK));
+                .json(success("Created", ingredient, statusCode.Created));
         });
     } catch (e) {
         HandlerException(e, res)
@@ -26,7 +24,7 @@ const getAllIngredient = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
 
-        return recipeService.getAllIngredient(pagination).then(ingredients => {
+        return ingredientService.getAllIngredient(pagination).then(ingredients => {
             res
                 .status(statusCode.OK)
                 .json(success("OK", ingredients.data, statusCode.OK, pagination.header, ingredients.totalPage));
@@ -41,7 +39,7 @@ const updateIngredient = (req, res) => {
         var body = req.body;
         var id = body.params.id;
 
-        Validator.ValidateId(id, "El id de la receta es inválido");
+        Validator.ValidateId(id, "El id del ingrediente es inválido");
 
         return ingredientService.updateIngredient(id, body).then(updatedRow => {
             if (updatedRow == null) {
@@ -61,12 +59,11 @@ const updateIngredient = (req, res) => {
 
 const deleteIngredient = (req, res) => {
     try {
-        var body = req.body;
         var id = req.params.id;
 
-        Validator.ValidateId(recipeId, "El id del ingrediente es inválido");
+        Validator.ValidateId(id, "El id del ingrediente es inválido");
 
-        return ingredientService.deleteIngredient(recipeId, body).then(deletedRow => {
+        return ingredientService.deleteIngredient(id).then(deletedRow => {
             if (deletedRow == null) {
                 res
                     .status(statusCode.OK)
@@ -84,12 +81,11 @@ const deleteIngredient = (req, res) => {
 
 const reactivateIngredient = (req, res) => {
     try {
-        var body = req.body;
         var id = req.params.id;
 
         Validator.ValidateId(id, "El id del ingrediente es inválido");
 
-        return ingredientService.reactivateIngredient(id, body).then(reactivatedRow =>{
+        return ingredientService.reactivateIngredient(id).then(reactivatedRow =>{
             if(reactivatedRow == null){
                 res
                     .status(statusCode.OK)
