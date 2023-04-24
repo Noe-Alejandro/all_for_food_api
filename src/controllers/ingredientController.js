@@ -10,12 +10,10 @@ const postIngredient = (req, res) => {
     try {
         var body = req.body;
 
-        Validator.ValidateId(req.id, "El id del ingrediente es inválido");
-
         return ingredientService.postIngredient(body).then(ingredient => {
             res
                 .status(statusCode.Created)
-                .json(success("Created", ingredient, statusCode.OK));
+                .json(success("Created", ingredient, statusCode.Created));
         });
     } catch (e) {
         HandlerException(e, res)
@@ -61,12 +59,11 @@ const updateIngredient = (req, res) => {
 
 const deleteIngredient = (req, res) => {
     try {
-        var body = req.body;
         var id = req.params.id;
 
         Validator.ValidateId(id, "El id del ingrediente es inválido");
 
-        return ingredientService.deleteIngredient(id, body).then(deletedRow => {
+        return ingredientService.deleteIngredient(id).then(deletedRow => {
             if (deletedRow == null) {
                 res
                     .status(statusCode.OK)
@@ -84,12 +81,11 @@ const deleteIngredient = (req, res) => {
 
 const reactivateIngredient = (req, res) => {
     try {
-        var body = req.body;
         var id = req.params.id;
 
         Validator.ValidateId(id, "El id del ingrediente es inválido");
 
-        return ingredientService.reactivateIngredient(id, body).then(reactivatedRow =>{
+        return ingredientService.reactivateIngredient(id).then(reactivatedRow =>{
             if(reactivatedRow == null){
                 res
                     .status(statusCode.OK)
