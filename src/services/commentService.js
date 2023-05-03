@@ -10,7 +10,9 @@ const getAllComment = async (recipeId, pagination) => {
     return Comment.findAll({
         where: {
             recipeId: recipeId
-        }
+        },
+        limit: pagination.options.limit,
+        offset: pagination.options.offset
     }, pagination.options
     ).then(comments => {
         return JSON.parse(JSON.stringify({ data: comments, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));

@@ -7,6 +7,16 @@ exports.success = (message, results, statusCode) => {
     };
 };
 
+exports.successToken = (message, results, statusCode, token) => {
+    return {
+        message,
+        error: false,
+        code: statusCode,
+        token: token,
+        results
+    };
+};
+
 exports.successPage = (message, results, statusCode, options, totalPage) => {
     return {
         message,
