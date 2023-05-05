@@ -44,9 +44,15 @@ const getRecipeById = (req, res) => {
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
 
         return recipeService.getRecipeById(recipeId).then(recipe => {
-            res
-                .status(statusCode.OK)
-                .json(success("OK", recipe, statusCode.OK));
+            if (recipe == null) {
+                res
+                    .status(statusCode.OK)
+                    .json(success("No se encontró un usuario con el id proporcionado", null, statusCode.OK));
+            } else {
+                res
+                    .status(statusCode.OK)
+                    .json(success("OK", recipe, statusCode.OK));
+            }
         });
     } catch (e) {
         HandlerException(e, res);

@@ -1,4 +1,6 @@
 const Recipe = require('../database/models/recipe');
+const User = require('../database/models/user');
+const { GetRecipeResponse } = require('../models/responses/recipe/getRecipe');
 
 /**
  * 
@@ -40,16 +42,25 @@ const getAllRecipe = async (pagination) => {
  * @param {number} recipeId : Identification number of the recipe to find.
  * @returns the recipe asociated to the recipeId if it's activated
  */
-const getRecipeById = (recipeId, status = 1) => {
-    return Recipe.findOne({
+const getRecipeById = async (recipeId, status = 1) => {
+    var recipe = await Recipe.findOne({
         where: {
             id: recipeId,
             status: status
         }
+    });
+    console.log(recipe.dataValues);
+    if (!recipe) {
+        return null;
     }
-    ).then(recipe => {
-        return JSON.parse(JSON.stringify(recipe, null, 2));
-    })
+
+    var user = await User.findOne({
+        where: {
+            id: recipe.dataValues.userId
+        }
+    });
+
+    return new GetRecipeResponse(recipe.dataValues, user.dataValues);
 };
 
 /**
