@@ -50,14 +50,6 @@ const postComment = (req) => {
 };
 
 const putComment = async (id, req) => {
-    const commentEntity = await Comment.findOne({
-        where: {
-            id: id
-        }
-    });
-    if (!commentEntity) {
-        return null;
-    }
     return Comment.update(
         {
             comment: req.comment,
@@ -94,4 +86,17 @@ const deleteComment = async (id) => {
         );
 }
 
-module.exports = { getAllComment, postComment, putComment, deleteComment, getMyComments };
+const getCommentById = async (id) => {
+    const commentEntity = await Comment.findOne({
+        where: {
+            id: id
+        }
+    });
+    if (!commentEntity) {
+        return null;
+    }else{
+        return commentEntity.dataValues;
+    }
+}
+
+module.exports = { getAllComment, postComment, putComment, deleteComment, getMyComments, getCommentById };

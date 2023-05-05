@@ -5,8 +5,7 @@ const { HandlerException } = require('../utils/helpers/errorHandler');
 
 const statusCode = require('../utils/helpers/statusCode');
 const authService = require('../services/authService');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const { generateAccessToken } = require('../middleware/auth/auth');
 
 const authUser = async (req, res) => {
     try {
@@ -14,13 +13,13 @@ const authUser = async (req, res) => {
 
         const response = await authService.authUser(email, password);
 
-        const accessToken = generateAccessToken(
-            {
-                id: response.id,
-                username: response.username
-            });
-
         if (response) {
+            const accessToken = generateAccessToken(
+                {
+                    id: response.id,
+                    username: response.username,
+                    permission: response.permission
+                });
             return res
                 .status(statusCode.OK)
                 .json(success("Ok", { token: accessToken }, statusCode.OK));
@@ -36,7 +35,7 @@ const authUser = async (req, res) => {
 
 const authToken = async (req, res) => {
     try {
-        const response = await authService.authToken(req.user.id);
+        const response = await authService.authToken(req.data.id);
 
         if (response) {
             return res
@@ -52,24 +51,4 @@ const authToken = async (req, res) => {
     }
 }
 
-const validateJWT = async (req, res, next) => {
-    const accessToken = req.headers['authorization'];
-    if (!accessToken) {
-        return res.status(403).send('Access denied');
-    }
-
-    jwt.verify(accessToken, process.env.SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).send('Access denied, token expired or incorrect');
-        } else {
-            req.user = user;
-            next();
-        }
-    });
-}
-
-function generateAccessToken(data) {
-    return jwt.sign(data, process.env.SECRET, { expiresIn: '10m' });
-}
-
-module.exports = { authUser, authToken, validateJWT };
+module.exports = { authUser, authToken };
