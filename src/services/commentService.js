@@ -13,7 +13,7 @@ const getAllComment = async (recipeId, pagination) => {
         },
         limit: pagination.options.limit,
         offset: pagination.options.offset
-    }, pagination.options
+    },
     ).then(comments => {
         return JSON.parse(JSON.stringify({ data: comments, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });

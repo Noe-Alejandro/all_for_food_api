@@ -1,6 +1,6 @@
 const Recipe = require('../database/models/recipe');
 const User = require('../database/models/user');
-const { GetRecipeResponse } = require('../models/responses/recipe/getRecipe');
+const { GetRecipeResponse, MapListRecipes } = require('../models/responses/recipe/getRecipe');
 
 /**
  * 
@@ -28,12 +28,15 @@ const getAllRecipe = async (pagination) => {
     const amount = await Recipe.count();
 
     return Recipe.findAll({
+        include: User,
         where: {
             status: 1
-        }
-    }, pagination.options
+        },
+        limit: pagination.options.limit,
+        offset: pagination.options.offset
+    },
     ).then(recipes => {
-        return JSON.parse(JSON.stringify({ data: recipes, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+        return JSON.parse(JSON.stringify({ data: MapListRecipes(recipes), totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });
 };
 
@@ -44,23 +47,17 @@ const getAllRecipe = async (pagination) => {
  */
 const getRecipeById = async (recipeId, status = 1) => {
     var recipe = await Recipe.findOne({
+        include: User,
         where: {
             id: recipeId,
             status: status
-        }
+        },
     });
-    console.log(recipe.dataValues);
     if (!recipe) {
         return null;
     }
 
-    var user = await User.findOne({
-        where: {
-            id: recipe.dataValues.userId
-        }
-    });
-
-    return new GetRecipeResponse(recipe.dataValues, user.dataValues);
+    return new GetRecipeResponse(recipe.dataValues);
 };
 
 /**

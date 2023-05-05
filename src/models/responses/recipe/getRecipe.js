@@ -13,10 +13,10 @@ class GetRecipeResponse {
     modifiedAt;
     status;
 
-    constructor(recipe, user) {
+    constructor(recipe) {
         this.id = recipe.id;
-        this.user.id = user.id;
-        this.user.username = user.username;
+        this.user.id = recipe.user.id;
+        this.user.username = recipe.user.username;
         this.title = recipe.title;
         this.image = recipe.image;
         this.description = recipe.description;
@@ -28,4 +28,12 @@ class GetRecipeResponse {
     }
 }
 
-module.exports = { GetRecipeResponse };
+function MapListRecipes(recipes) {
+    const mappedList = [];
+    recipes.forEach(recipe => {
+        mappedList.push(new GetRecipeResponse(recipe));
+    });
+    return mappedList;
+}
+
+module.exports = { GetRecipeResponse, MapListRecipes };
