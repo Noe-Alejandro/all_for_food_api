@@ -10,6 +10,9 @@ const postRecipe = (req, res) => {
     try {
         var body = req.body;
 
+        Validator.ValidateId(body.userId, "El id del usuario es inválido");
+        Validator.ValidateMatchTokenUserId(body.userId, req.data);
+
         return recipeService.postRecipe(body).then(recipe => {
             res
                 .status(statusCode.Created)
@@ -50,67 +53,81 @@ const getRecipeById = (req, res) => {
     }
 };
 
-const updateRecipe = (req, res) => {
+const updateRecipe = async (req, res) => {
     try {
         var body = req.body;
         var recipeId = req.params.recipeId;
 
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
+        Validator.ValidateId(body.userId, "El id del usuario es inválido");
+        Validator.ValidateMatchTokenUserId(body.userId, req.data);
+
+        var recipe = await recipeService.getRecipeById(recipeId);
+
+        if (!recipe) {
+            return res
+                .status(statusCode.OK)
+                .json(success("No se encontró una receta con el id proporcionado o está desactivada", null, statusCode.OK));
+        }
+
+        Validator.ValidateOwner(recipe.userId, body.userId);
 
         return recipeService.updateRecipe(recipeId, body).then(updatedRow => {
-            if (updatedRow == null) {
-                res
-                    .status(statusCode.OK)
-                    .json(success("Receta a actualizar no encontrada", null, statusCode.OK));
-            } else {
-                res
-                    .status(statusCode.OK)
-                    .json(success("OK", updatedRow, statusCode.OK));
-            }
+            res
+                .status(statusCode.OK)
+                .json(success("OK", updatedRow, statusCode.OK));
         });
     } catch (e) {
         HandlerException(e, res)
     }
 };
 
-const deleteRecipe = (req, res) => {
+const deleteRecipe = async (req, res) => {
     try {
+        var body = req.body;
         var recipeId = req.params.recipeId;
 
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
+        Validator.ValidateId(body.userId, "El id del usuario es inválido");
+        Validator.ValidateMatchTokenUserId(body.userId, req.data);
+
+        var recipe = await recipeService.getRecipeById(recipeId);
+
+        if (!recipe) {
+            return res
+                .status(statusCode.OK)
+                .json(success("No se encontró una receta con el id proporcionado o ya se encuentra desactivada", null, statusCode.OK));
+        }
+
+        Validator.ValidateOwner(recipe.userId, body.userId);
 
         return recipeService.deleteRecipe(recipeId).then(deletedRow => {
-            if (deletedRow == null) {
-                res
-                    .status(statusCode.OK)
-                    .json(success("Receta a desactivar no encontrada", null, statusCode.OK));
-            } else {
-                res
-                    .status(statusCode.OK)
-                    .json(success("OK", deletedRow, statusCode.OK));
-            }
+            res
+                .status(statusCode.OK)
+                .json(success("OK", deletedRow, statusCode.OK));
         });
     } catch (e) {
         HandlerException(e, res)
     }
 };
 
-const reactivateRecipe = (req, res) => {
+const reactivateRecipe = async (req, res) => {
     try {
         var recipeId = req.params.recipeId;
 
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
 
+        var recipe = await recipeService.getRecipeById(recipeId, 0);
+        if (!recipe) {
+            res
+                .status(statusCode.OK)
+                .json(success("No se encontró una receta con el id proporcionado o ya se encuentra activa", null, statusCode.OK));
+        }
+
         return recipeService.reactivateRecipe(recipeId).then(reactivatedRow => {
-            if (reactivatedRow == null) {
-                res
-                    .status(statusCode.OK)
-                    .json(success("Receta a reactivar no encontrada", null, statusCode.OK));
-            } else {
-                res
-                    .status(statusCode.OK)
-                    .json(success("OK", reactivatedRow, statusCode.OK));
-            }
+            res
+                .status(statusCode.OK)
+                .json(success("OK", reactivatedRow, statusCode.OK));
         });
     } catch (e) {
         HandlerException(e);

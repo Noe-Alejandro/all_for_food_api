@@ -19,7 +19,7 @@ const postRecipe = (req) => {
     }).then(recipe => {
         return recipe;
     })
-}
+};
 
 
 const getAllRecipe = async (pagination) => {
@@ -33,24 +33,24 @@ const getAllRecipe = async (pagination) => {
     ).then(recipes => {
         return JSON.parse(JSON.stringify({ data: recipes, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });
-}
+};
 
 /**
  * 
  * @param {number} recipeId : Identification number of the recipe to find.
  * @returns the recipe asociated to the recipeId if it's activated
  */
-const getRecipeById = (recipeId => {
+const getRecipeById = (recipeId, status = 1) => {
     return Recipe.findOne({
         where: {
             id: recipeId,
-            status: 1
+            status: status
         }
     }
     ).then(recipe => {
         return JSON.parse(JSON.stringify(recipe, null, 2));
     })
-});
+};
 
 /**
  * 
@@ -59,16 +59,6 @@ const getRecipeById = (recipeId => {
  * @returns the updated recipe
  */
 const updateRecipe = async (recipeId, req) => {
-    const recipe = await Recipe.findOne({
-        where: {
-            id: recipeId,
-            status: 1
-        }
-    });
-    if (!recipe) {
-        return null;
-    }
-
     return Recipe.update(
         {
             title: req.title,
@@ -90,17 +80,6 @@ const updateRecipe = async (recipeId, req) => {
  * @param {number} recipeId : Identification number of the recipe to deactivate/delete.
  */
 const deleteRecipe = async (recipeId) => {
-    const recipe = await Recipe.findOne({
-        where: {
-            id: recipeId,
-            status: 1
-        }
-    });
-    console.log(recipe.dataValues);
-    if (!recipe) {
-        return null;
-    }
-
     return Recipe.update({ status: 0 }, {
         where: {
             id: recipeId,
@@ -112,16 +91,6 @@ const deleteRecipe = async (recipeId) => {
 };
 
 const reactivateRecipe = async (recipeId) => {
-    const recipe = await Recipe.findOne({
-        where: {
-            id: recipeId,
-            status: 0
-        }
-    });
-    if (!recipe) {
-        return null;
-    }
-
     return Recipe.update({ status: 1 }, {
         where: {
             id: recipeId,

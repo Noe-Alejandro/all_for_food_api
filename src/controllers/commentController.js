@@ -72,7 +72,7 @@ const putComment = async (req, res) => {
         var comment = await commentService.getCommentById(commentId);
 
         if (!comment) {
-            res
+            return res
                 .status(statusCode.OK)
                 .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
         }
@@ -98,7 +98,7 @@ const deleteComment = async (req, res) => {
         var comment = await commentService.getCommentById(commentId);
 
         if (!comment) {
-            res
+            return res
                 .status(statusCode.OK)
                 .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
         }

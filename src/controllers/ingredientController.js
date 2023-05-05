@@ -1,4 +1,4 @@
-const { success, error, validation } = require("../utils/helpers/baseResponse");
+const { success } = require("../utils/helpers/baseResponse");
 const { Validator } = require('../utils/helpers/validator');
 const { HandlerException } = require('../utils/helpers/errorHandler');
 const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
@@ -34,22 +34,24 @@ const getAllIngredient = (req, res) => {
     }
 };
 
-const deleteIngredient = (req, res) => {
+const deleteIngredient = async (req, res) => {
     try {
         var id = req.params.ingredientId;
 
         Validator.ValidateId(id, "El id del comentario es inválido");
 
+        var ingredient = await ingredientService.getIngredientById(id);
+
+        if (!ingredient) {
+            return res
+                .status(statusCode.OK)
+                .json(success("No se encontró un ingrediente con el id proporcionado", null, statusCode.OK));
+        }
+
         return ingredientService.deleteIngredient(id).then(deletedRow => {
-            if (deletedRow == null) {
-                res
-                    .status(statusCode.OK)
-                    .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
-            } else {
-                res
-                    .status(statusCode.OK)
-                    .json(success("OK", deletedRow, statusCode.OK));
-            }
+            res
+                .status(statusCode.OK)
+                .json(success("OK", deletedRow, statusCode.OK));
         });
     } catch (e) {
         HandlerException(e, res)
