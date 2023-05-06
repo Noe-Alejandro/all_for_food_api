@@ -24,13 +24,13 @@ const postRecipe = (req) => {
 };
 
 
-const getAllRecipe = async (pagination) => {
+const getAllRecipe = async (pagination, status = 1) => {
     const amount = await Recipe.count();
 
     return Recipe.findAll({
         include: User,
         where: {
-            status: 1
+            status: status
         },
         limit: pagination.options.limit,
         offset: pagination.options.offset

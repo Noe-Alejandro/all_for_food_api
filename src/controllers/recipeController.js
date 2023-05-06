@@ -1,4 +1,4 @@
-const { success, error, validation } = require("../utils/helpers/baseResponse");
+const { success } = require("../utils/helpers/baseResponse");
 const { Validator } = require('../utils/helpers/validator');
 const { HandlerException } = require('../utils/helpers/errorHandler');
 const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
@@ -75,8 +75,7 @@ const updateRecipe = async (req, res) => {
                 .status(statusCode.OK)
                 .json(success("No se encontró una receta con el id proporcionado o está desactivada", null, statusCode.OK));
         }
-
-        Validator.ValidateOwner(recipe.userId, body.userId);
+        Validator.ValidateOwner(recipe.user.id, body.userId);
 
         return recipeService.updateRecipe(recipeId, body).then(updatedRow => {
             res
@@ -90,12 +89,9 @@ const updateRecipe = async (req, res) => {
 
 const deleteRecipe = async (req, res) => {
     try {
-        var body = req.body;
         var recipeId = req.params.recipeId;
 
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
-        Validator.ValidateId(body.userId, "El id del usuario es inválido");
-        Validator.ValidateMatchTokenUserId(body.userId, req.data);
 
         var recipe = await recipeService.getRecipeById(recipeId);
 
@@ -104,8 +100,6 @@ const deleteRecipe = async (req, res) => {
                 .status(statusCode.OK)
                 .json(success("No se encontró una receta con el id proporcionado o ya se encuentra desactivada", null, statusCode.OK));
         }
-
-        Validator.ValidateOwner(recipe.userId, body.userId);
 
         return recipeService.deleteRecipe(recipeId).then(deletedRow => {
             res
@@ -125,7 +119,7 @@ const reactivateRecipe = async (req, res) => {
 
         var recipe = await recipeService.getRecipeById(recipeId, 0);
         if (!recipe) {
-            res
+            return res
                 .status(statusCode.OK)
                 .json(success("No se encontró una receta con el id proporcionado o ya se encuentra activa", null, statusCode.OK));
         }

@@ -8,7 +8,7 @@ router
     .get("/:recipeId", recipeController.getRecipeById)
     .post("/", validateJWT, recipeController.postRecipe)
     .put("/:recipeId", validateJWT, recipeController.updateRecipe)
-    .put("/delete/:recipeId", validateJWT, recipeController.deleteRecipe)
+    .put("/delete/:recipeId", [validateJWT, validateAdmin], recipeController.deleteRecipe)
     .put("/reactivate/:recipeId", [validateJWT, validateAdmin], recipeController.reactivateRecipe);
 
 module.exports = router;
