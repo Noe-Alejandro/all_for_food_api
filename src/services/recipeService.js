@@ -25,7 +25,11 @@ const postRecipe = (req) => {
 
 
 const getAllRecipe = async (pagination, status = 1) => {
-    const amount = await Recipe.count();
+    const amount = await Recipe.count({
+        where: {
+            status: status
+        }
+    });
 
     return Recipe.findAll({
         include: User,

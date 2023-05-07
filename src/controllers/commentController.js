@@ -5,6 +5,7 @@ const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
 
 const statusCode = require('../utils/helpers/statusCode');
 const commentService = require('../services/commentService');
+const { MapListComment } = require("../models/responses/comment/getComment");
 
 const getAllComment = (req, res) => {
     try {
@@ -16,7 +17,7 @@ const getAllComment = (req, res) => {
         return commentService.getAllComment(recipeId, pagination).then(result => {
             res
                 .status(statusCode.OK)
-                .json(successPage("OK", result.data, statusCode.OK, pagination.header, result.totalPage));
+                .json(successPage("OK", MapListComment(result.data), statusCode.OK, pagination.header, result.totalPage));
         });
     } catch (e) {
         HandlerException(e, res);
@@ -36,7 +37,7 @@ const getMyComments = (req, res) => {
         return commentService.getMyComments(recipeId, userId, pagination).then(result => {
             res
                 .status(statusCode.OK)
-                .json(successPage("OK", result.data, statusCode.OK, pagination.header, result.totalPage));
+                .json(successPage("OK", MapListComment(result.data), statusCode.OK, pagination.header, result.totalPage));
         });
     } catch (e) {
         HandlerException(e, res);

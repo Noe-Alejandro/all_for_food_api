@@ -1,10 +1,11 @@
-const { success } = require("../utils/helpers/baseResponse");
+const { success, successPage } = require("../utils/helpers/baseResponse");
 const { Validator } = require('../utils/helpers/validator');
 const { HandlerException } = require('../utils/helpers/errorHandler');
 const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
 
 const statusCode = require('../utils/helpers/statusCode');
 const recipeService = require('../services/recipeService');
+const { MapListRecipes } = require("../models/responses/recipe/getRecipe");
 
 const postRecipe = (req, res) => {
     try {
@@ -30,7 +31,28 @@ const getAllRecipe = (req, res) => {
         return recipeService.getAllRecipe(pagination).then(recipes => {
             res
                 .status(statusCode.OK)
-                .json(success("OK", recipes.data, statusCode.OK, pagination.header, recipes.totalPage));
+                .json(successPage("OK", recipes.data, statusCode.OK, pagination.header, recipes.totalPage));
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
+const getAllRecipeForAdmin = (req, res) => {
+    try {
+        var pagination = GetConfigPagination(req);
+        var status = req.params.status;
+
+        return recipeService.getAllRecipe(pagination, status).then(recipes => {
+            if (recipes == null) {
+                res
+                    .status(statusCode.OK)
+                    .json(success("Sin resultados", [], statusCode.OK));
+            } else {
+                res
+                    .status(statusCode.OK)
+                    .json(successPage("OK", MapListRecipes(recipes.data), statusCode.OK, pagination.header, recipes.totalPage));
+            }
         });
     } catch (e) {
         HandlerException(e, res);
@@ -134,4 +156,4 @@ const reactivateRecipe = async (req, res) => {
     }
 };
 
-module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };
+module.exports = { postRecipe, getAllRecipe, getAllRecipeForAdmin, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };

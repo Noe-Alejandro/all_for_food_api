@@ -1,4 +1,4 @@
-const { InvalidIdException, NotMatchTokenUserId, NotOwnerException } = require('../exceptions/InvalidIdException');
+const { InvalidIdException, NotMatchTokenUserId, NotOwnerException, InvalidPasswordFormatException } = require('../exceptions/InvalidIdException');
 const statusCode = require('../helpers/statusCode');
 
 class ExceptionFactory {
@@ -10,6 +10,8 @@ class ExceptionFactory {
                 return new NotMatchTokenUserId(message == null ? "Not match id provided with token user id" : message, { status: statusCode.Forbidden });
             case "NotOwnerException":
                 return new NotOwnerException(message == null ? "You are not the resource owner" : message, { status: statusCode.Forbidden });
+            case "InvalidPasswordFormatException":
+                return new InvalidPasswordFormatException(message == null ? "Password format provided is invalid" : message, { status: statusCode.UnprocessableContent });
         }
     }
 }

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const Permissions = require('./permission');
 
 const User = sequelize.define("user",
     {
@@ -46,5 +47,6 @@ const User = sequelize.define("user",
     tableName: "user",
     timestamps: false
 });
+
 
 module.exports = User;

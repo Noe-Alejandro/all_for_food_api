@@ -6,6 +6,7 @@ const { validateJWT, validateAdmin } = require('../../middleware/auth/auth');
 router
     .get("/", recipeController.getAllRecipe)
     .get("/:recipeId", recipeController.getRecipeById)
+    .get("/admin/getAll/:status", [validateJWT, validateAdmin], recipeController.getAllRecipeForAdmin)
     .post("/", validateJWT, recipeController.postRecipe)
     .put("/:recipeId", validateJWT, recipeController.updateRecipe)
     .put("/delete/:recipeId", [validateJWT, validateAdmin], recipeController.deleteRecipe)

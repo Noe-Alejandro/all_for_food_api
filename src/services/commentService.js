@@ -1,4 +1,5 @@
 const Comment = require('../database/models/comment');
+const User = require('../database/models/user');
 
 const getAllComment = async (recipeId, pagination) => {
     const amount = await Comment.count({
@@ -8,6 +9,7 @@ const getAllComment = async (recipeId, pagination) => {
     });
 
     return Comment.findAll({
+        include: User,
         where: {
             recipeId: recipeId
         },
@@ -27,6 +29,7 @@ const getMyComments = async (recipeId, userId, pagination) => {
         }
     });
     return Comment.findAll({
+        include: User,
         where: {
             recipeId: recipeId,
             userId: userId
@@ -94,7 +97,7 @@ const getCommentById = async (id) => {
     });
     if (!commentEntity) {
         return null;
-    }else{
+    } else {
         return commentEntity.dataValues;
     }
 }

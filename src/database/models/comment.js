@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const User = require('../models/user');
 const sequelize = require('../db');
 
 const Comment = sequelize.define("comment",
@@ -34,5 +35,7 @@ const Comment = sequelize.define("comment",
     tableName: "comment",
     timestamps: false
 });
+
+Comment.belongsTo(User);
 
 module.exports = Comment;
