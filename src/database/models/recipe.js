@@ -11,11 +11,7 @@ const Recipe = sequelize.define("recipe",
         },
         userId: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            references:{
-                model: User,
-                key: 'id'
-            }
+            allowNull: false
         },
         title: {
             type: DataTypes.STRING,
@@ -59,5 +55,6 @@ const Recipe = sequelize.define("recipe",
     timestamps: false
 });
 
+Recipe.belongsTo(User);
 
 module.exports = Recipe;

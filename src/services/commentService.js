@@ -1,4 +1,5 @@
 const Comment = require('../database/models/comment');
+const User = require('../database/models/user');
 
 const getAllComment = async (recipeId, pagination) => {
     const amount = await Comment.count({
@@ -8,12 +9,13 @@ const getAllComment = async (recipeId, pagination) => {
     });
 
     return Comment.findAll({
+        include: User,
         where: {
             recipeId: recipeId
         },
         limit: pagination.options.limit,
         offset: pagination.options.offset
-    }, pagination.options
+    },
     ).then(comments => {
         return JSON.parse(JSON.stringify({ data: comments, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });
@@ -27,6 +29,7 @@ const getMyComments = async (recipeId, userId, pagination) => {
         }
     });
     return Comment.findAll({
+        include: User,
         where: {
             recipeId: recipeId,
             userId: userId
@@ -50,14 +53,6 @@ const postComment = (req) => {
 };
 
 const putComment = async (id, req) => {
-    const commentEntity = await Comment.findOne({
-        where: {
-            id: id
-        }
-    });
-    if (!commentEntity) {
-        return null;
-    }
     return Comment.update(
         {
             comment: req.comment,
@@ -94,4 +89,17 @@ const deleteComment = async (id) => {
         );
 }
 
-module.exports = { getAllComment, postComment, putComment, deleteComment, getMyComments };
+const getCommentById = async (id) => {
+    const commentEntity = await Comment.findOne({
+        where: {
+            id: id
+        }
+    });
+    if (!commentEntity) {
+        return null;
+    } else {
+        return commentEntity.dataValues;
+    }
+}
+
+module.exports = { getAllComment, postComment, putComment, deleteComment, getMyComments, getCommentById };

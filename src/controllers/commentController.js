@@ -5,6 +5,7 @@ const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
 
 const statusCode = require('../utils/helpers/statusCode');
 const commentService = require('../services/commentService');
+const { MapListComment } = require("../models/responses/comment/getComment");
 
 const getAllComment = (req, res) => {
     try {
@@ -16,7 +17,7 @@ const getAllComment = (req, res) => {
         return commentService.getAllComment(recipeId, pagination).then(result => {
             res
                 .status(statusCode.OK)
-                .json(successPage("OK", result.data, statusCode.OK, pagination.header, result.totalPage));
+                .json(successPage("OK", MapListComment(result.data), statusCode.OK, pagination.header, result.totalPage));
         });
     } catch (e) {
         HandlerException(e, res);
@@ -36,7 +37,7 @@ const getMyComments = (req, res) => {
         return commentService.getMyComments(recipeId, userId, pagination).then(result => {
             res
                 .status(statusCode.OK)
-                .json(successPage("OK", result.data, statusCode.OK, pagination.header, result.totalPage));
+                .json(successPage("OK", MapListComment(result.data), statusCode.OK, pagination.header, result.totalPage));
         });
     } catch (e) {
         HandlerException(e, res);
@@ -49,6 +50,7 @@ const postComment = (req, res) => {
 
         Validator.ValidateId(body.recipeId, "El id de la receta es inválido");
         Validator.ValidateId(body.userId, "El id del usuario es inválido");
+        Validator.ValidateMatchTokenUserId(body.userId, req.data);
 
         return commentService.postComment(body).then(comment => {
             res
@@ -60,45 +62,54 @@ const postComment = (req, res) => {
     }
 }
 
-const putComment = (req, res) => {
+const putComment = async (req, res) => {
     try {
         var body = req.body;
         var commentId = req.params.commentId;
 
         Validator.ValidateId(commentId, "El id del comentario es inválido");
+        Validator.ValidateMatchTokenUserId(body.userId, req.data);
+
+        var comment = await commentService.getCommentById(commentId);
+
+        if (!comment) {
+            return res
+                .status(statusCode.OK)
+                .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
+        }
+
+        Validator.ValidateOwner(comment.userId, body.userId);
 
         return commentService.putComment(commentId, body).then(affectedRow => {
-            if (affectedRow == null) {
-                res
-                    .status(statusCode.OK)
-                    .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
-            } else {
-                res
-                    .status(statusCode.OK)
-                    .json(success("OK", affectedRow, statusCode.OK));
-            }
+            res
+                .status(statusCode.OK)
+                .json(success("OK", affectedRow, statusCode.OK));
         });
     } catch (e) {
         HandlerException(e, res)
     }
 }
 
-const deleteComment = (req, res) => {
+const deleteComment = async (req, res) => {
     try {
         var commentId = req.params.commentId;
 
         Validator.ValidateId(commentId, "El id del comentario es inválido");
 
+        var comment = await commentService.getCommentById(commentId);
+
+        if (!comment) {
+            return res
+                .status(statusCode.OK)
+                .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
+        }
+
+        Validator.ValidateOwner(comment.userId, req.data.id);
+
         return commentService.deleteComment(commentId).then(deletedRow => {
-            if (deletedRow == null) {
-                res
-                    .status(statusCode.OK)
-                    .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
-            } else {
-                res
-                    .status(statusCode.OK)
-                    .json(success("OK", deletedRow, statusCode.OK));
-            }
+            res
+                .status(statusCode.OK)
+                .json(success("OK", deletedRow, statusCode.OK));
         });
     } catch (e) {
         HandlerException(e, res)

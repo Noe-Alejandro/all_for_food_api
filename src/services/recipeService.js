@@ -1,4 +1,6 @@
 const Recipe = require('../database/models/recipe');
+const User = require('../database/models/user');
+const { GetRecipeResponse, MapListRecipes } = require('../models/responses/recipe/getRecipe');
 
 /**
  * 
@@ -19,38 +21,48 @@ const postRecipe = (req) => {
     }).then(recipe => {
         return recipe;
     })
-}
+};
 
 
-const getAllRecipe = async (pagination) => {
-    const amount = await Recipe.count();
+const getAllRecipe = async (pagination, status = 1) => {
+    const amount = await Recipe.count({
+        where: {
+            status: status
+        }
+    });
 
     return Recipe.findAll({
+        include: User,
         where: {
-            status: 1
-        }
-    }, pagination.options
+            status: status
+        },
+        limit: pagination.options.limit,
+        offset: pagination.options.offset
+    },
     ).then(recipes => {
-        return JSON.parse(JSON.stringify({ data: recipes, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+        return JSON.parse(JSON.stringify({ data: MapListRecipes(recipes), totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });
-}
+};
 
 /**
  * 
  * @param {number} recipeId : Identification number of the recipe to find.
  * @returns the recipe asociated to the recipeId if it's activated
  */
-const getRecipeById = (recipeId => {
-    return Recipe.findOne({
+const getRecipeById = async (recipeId, status = 1) => {
+    var recipe = await Recipe.findOne({
+        include: User,
         where: {
             id: recipeId,
-            status: 1
-        }
+            status: status
+        },
+    });
+    if (!recipe) {
+        return null;
     }
-    ).then(recipe => {
-        return JSON.parse(JSON.stringify(recipe, null, 2));
-    })
-});
+
+    return new GetRecipeResponse(recipe.dataValues);
+};
 
 /**
  * 
@@ -59,16 +71,6 @@ const getRecipeById = (recipeId => {
  * @returns the updated recipe
  */
 const updateRecipe = async (recipeId, req) => {
-    const recipe = await Recipe.findOne({
-        where: {
-            id: recipeId,
-            status: 1
-        }
-    });
-    if (!recipe) {
-        return null;
-    }
-
     return Recipe.update(
         {
             title: req.title,
@@ -90,17 +92,6 @@ const updateRecipe = async (recipeId, req) => {
  * @param {number} recipeId : Identification number of the recipe to deactivate/delete.
  */
 const deleteRecipe = async (recipeId) => {
-    const recipe = await Recipe.findOne({
-        where: {
-            id: recipeId,
-            status: 1
-        }
-    });
-    console.log(recipe.dataValues);
-    if (!recipe) {
-        return null;
-    }
-
     return Recipe.update({ status: 0 }, {
         where: {
             id: recipeId,
@@ -112,16 +103,6 @@ const deleteRecipe = async (recipeId) => {
 };
 
 const reactivateRecipe = async (recipeId) => {
-    const recipe = await Recipe.findOne({
-        where: {
-            id: recipeId,
-            status: 0
-        }
-    });
-    if (!recipe) {
-        return null;
-    }
-
     return Recipe.update({ status: 1 }, {
         where: {
             id: recipeId,

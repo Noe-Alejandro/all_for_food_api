@@ -21,16 +21,18 @@ const getAllIngredient = async (pagination) => {
     });
 }
 
-const deleteIngredient = async (id) => {
-    const ingredientEntity = await Ingredient.findOne({
+const getIngredientById = (ingredientId) => {
+    return Ingredient.findOne({
         where: {
-            id: id
+            id: ingredientId
         }
-    });
-    if (!ingredientEntity) {
-        return null;
     }
+    ).then(ingredient => {
+        return JSON.parse(JSON.stringify(ingredient, null, 2));
+    })
+};
 
+const deleteIngredient = async (id) => {
     return Ingredient.destroy(
         {
             where: {
@@ -42,4 +44,4 @@ const deleteIngredient = async (id) => {
         );
 }
 
-module.exports = { postIngredient, getAllIngredient, deleteIngredient };
+module.exports = { postIngredient, getAllIngredient, getIngredientById, deleteIngredient };
