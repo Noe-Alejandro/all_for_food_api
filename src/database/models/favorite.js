@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const User = require('./user');
+const Recipe = require('./recipe');
 
 const Favorite = sequelize.define("favorites",
     {
@@ -22,5 +24,8 @@ const Favorite = sequelize.define("favorites",
     tableName: "favorites",
     timestamps: false
 });
+
+Favorite.belongsTo(User);
+Favorite.belongsTo(Recipe);
 
 module.exports = Favorite;
