@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const User = require('./user');
 
 const Follow = sequelize.define("follows",
     {
@@ -22,5 +23,8 @@ const Follow = sequelize.define("follows",
     tableName: "follows",
     timestamps: false
 });
+
+Follow.belongsTo(User, { as: 'follower', foreignKey: 'userId' });
+Follow.belongsTo(User, { as: 'following', foreignKey: 'followId' });
 
 module.exports = Follow;

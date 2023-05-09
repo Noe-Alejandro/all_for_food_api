@@ -4,8 +4,9 @@ const v1RecipeRouter = require('./v1/routes/recipeRoutes');
 const v1UserRouter = require("./v1/routes/userRoutes");
 const v1IngredientRouter = require("./v1/routes/ingredientRoutes");
 const v1AuthRouter = require("./v1/routes/authRoutes");
-const v1Score = require("./v1/routes/scoreRoutes");
-const v1Favorite = require("./v1/routes/favoriteRoutes");
+const v1ScoreRouter = require("./v1/routes/scoreRoutes");
+const v1FavoriteRouter = require("./v1/routes/favoriteRoutes");
+const v1FollowRouter = require("./v1/routes/followRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -23,8 +24,9 @@ app.use("/api/v1/recipe", v1RecipeRouter);
 app.use("/api/v1/user", v1UserRouter);
 app.use("/api/v1/ingredient", v1IngredientRouter);
 app.use("/api/v1/auth", v1AuthRouter);
-app.use("/api/v1/score", v1Score);
-app.use("/api/v1/favorite", v1Favorite);
+app.use("/api/v1/score", v1ScoreRouter);
+app.use("/api/v1/favorite", v1FavoriteRouter);
+app.use("/api/v1/follow", v1FollowRouter);
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
