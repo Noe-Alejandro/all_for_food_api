@@ -2,6 +2,8 @@ const Ingredient = require('../database/models/ingredient');
 const Recipe = require('../database/models/recipe');
 const RecipeIngredient = require('../database/models/recipeIngredient');
 const User = require('../database/models/user');
+const Follow = require('../database/models/follow');
+
 const { GetRecipeResponse, MapListRecipes } = require('../models/responses/recipe/getRecipe');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
@@ -48,6 +50,39 @@ const getAllRecipe = async (pagination, status = 1) => {
     });
 };
 
+const getMyRecipes = async (pagination, userId) => {
+    return await getByUsersId(pagination, [userId]);
+};
+
+const getRecipesFromMyFollowings = async (pagination, userId) => {
+    const myFollowings = await Follow.findAll({
+        attributes: ['followId'],
+        where: {
+            userId: userId
+        }
+    });
+
+    var followings = JSON.parse(JSON.stringify(myFollowings, null, 2));
+
+    return await getByUsersId(pagination, followings.map(x => x.followId));
+};
+
+
+const getByUsersId = async (pagination, usersId) => {
+    return Recipe.findAndCountAll({
+        include: User,
+        where: {
+            userId: usersId,
+            status: 1
+        },
+        limit: pagination.options.limit,
+        offset: pagination.options.offset
+    },
+    ).then(recipes => {
+        return JSON.parse(JSON.stringify({ data: MapListRecipes(recipes.rows), totalPage: Math.ceil(recipes.count / pagination.header.size) }, null, 2));
+    });
+};
+
 const getAllRecipeByTitle = async (title, pagination, status = 1) => {
     const amount = await Recipe.count({
         where: {
@@ -87,7 +122,7 @@ const getAllRecipeByIngredients = async (ingredients, pagination, status = 1) =>
     var objLstRecipes = JSON.parse(JSON.stringify(matchAtLessOne, null, 2));
     var lstRecipes = [];
     objLstRecipes.forEach(recipe => {
-        if(recipe.countIngredients >= ingredients.length){
+        if (recipe.countIngredients >= ingredients.length) {
             lstRecipes.push(recipe.recipeId);
         }
     });
@@ -102,7 +137,6 @@ const getAllRecipeByIngredients = async (ingredients, pagination, status = 1) =>
         offset: pagination.options.offset
     },
     ).then(recipes => {
-        console.log(recipes);
         return JSON.parse(JSON.stringify({ data: MapListRecipes(recipes.rows), totalPage: Math.ceil(recipes.count / pagination.header.size) }, null, 2));
     });
 };
@@ -125,6 +159,24 @@ const getRecipeById = async (recipeId, status = 1) => {
     }
 
     return new GetRecipeResponse(recipe.dataValues);
+};
+
+const getRandomRecipe = async (pagination, status = 1) => {
+    return Recipe.findAndCountAll({
+        include: User,
+        order: Sequelize.literal('rand()'), limit: 1,
+        where: {
+            status: status
+        },
+        limit: pagination.options.limit,
+        offset: pagination.options.offset
+    },
+    ).then(recipes => {
+        if (recipes != null && recipes.rows != null) {
+            return new GetRecipeResponse(JSON.parse(JSON.stringify(recipes.rows[0])));
+        }
+        return null;
+    });
 };
 
 /**
@@ -176,4 +228,4 @@ const reactivateRecipe = async (recipeId) => {
     });
 }
 
-module.exports = { postRecipe, getAllRecipe, getAllRecipeByTitle, getAllRecipeByIngredients, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };
+module.exports = { postRecipe, getAllRecipe, getMyRecipes, getRecipesFromMyFollowings, getRandomRecipe, getAllRecipeByTitle, getAllRecipeByIngredients, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };
