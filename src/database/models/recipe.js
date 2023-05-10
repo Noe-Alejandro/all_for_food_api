@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
 const User = require('../models/user');
+const Ingredient = require('../models/ingredient');
+const RecipeIngredient = require('../models/recipeIngredient');
 const sequelize = require('../db');
 
 const Recipe = sequelize.define("recipe",
@@ -56,5 +58,6 @@ const Recipe = sequelize.define("recipe",
 });
 
 Recipe.belongsTo(User);
+Recipe.belongsToMany(Ingredient, { through: RecipeIngredient });
 
 module.exports = Recipe;

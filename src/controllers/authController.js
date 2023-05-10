@@ -40,7 +40,13 @@ const authToken = async (req, res) => {
         if (response) {
             return res
                 .status(statusCode.OK)
-                .json(success("Ok", response, statusCode.OK));
+                .json(success("Ok", {
+                    id: response.id,
+                    username: response.username,
+                    icon: response.icon,
+                    email: response.email,
+                    permission: response.permission
+                }, statusCode.OK));
         } else {
             return res
                 .status(statusCode.OK)

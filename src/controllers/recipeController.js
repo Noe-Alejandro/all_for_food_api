@@ -38,6 +38,34 @@ const getAllRecipe = (req, res) => {
     }
 };
 
+const getAllRecipeByTitle = (req, res) => {
+    try {
+        var pagination = GetConfigPagination(req);
+
+        return recipeService.getAllRecipeByTitle(req.body.title, pagination).then(recipes => {
+            res
+                .status(statusCode.OK)
+                .json(successPage("OK", recipes.data, statusCode.OK, pagination.header, recipes.totalPage));
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
+const getAllRecipeByIngredients = (req, res) => {
+    try {
+        var pagination = GetConfigPagination(req);
+
+        return recipeService.getAllRecipeByIngredients(req.body.ingredients, pagination).then(recipes => {
+            res
+                .status(statusCode.OK)
+                .json(successPage("OK", recipes.data, statusCode.OK, pagination.header, recipes.totalPage));
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
 const getAllRecipeForAdmin = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -70,6 +98,72 @@ const getRecipeById = (req, res) => {
                 res
                     .status(statusCode.OK)
                     .json(success("No se encontró un usuario con el id proporcionado", null, statusCode.OK));
+            } else {
+                res
+                    .status(statusCode.OK)
+                    .json(success("OK", recipe, statusCode.OK));
+            }
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
+const getMyRecipes = (req, res) => {
+    try {
+        var pagination = GetConfigPagination(req);
+        var userId = req.params.userId;
+
+        Validator.ValidateId(userId, "El id del usuario es inválido");
+
+        return recipeService.getMyRecipes(pagination, userId).then(recipes => {
+            if (recipes == null) {
+                res
+                    .status(statusCode.OK)
+                    .json(success("Sin resultados", null, statusCode.NoContent));
+            } else {
+                res
+                    .status(statusCode.OK)
+                    .json(successPage("OK", MapListRecipes(recipes.data), statusCode.OK, pagination.header, recipes.totalPage));
+            }
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
+const getRecipesFromMyFollowings = (req, res) => {
+    try {
+        var pagination = GetConfigPagination(req);
+        var userId = req.params.userId;
+
+        Validator.ValidateId(userId, "El id del usuario es inválido");
+
+        return recipeService.getRecipesFromMyFollowings(pagination, userId).then(recipes => {
+            if (recipes == null) {
+                res
+                    .status(statusCode.OK)
+                    .json(success("Sin resultados", null, statusCode.NoContent));
+            } else {
+                res
+                    .status(statusCode.OK)
+                    .json(successPage("OK", MapListRecipes(recipes.data), statusCode.OK, pagination.header, recipes.totalPage));
+            }
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
+const getRandomRecipe = (req, res) => {
+    try {
+        var pagination = GetConfigPagination(req);
+
+        return recipeService.getRandomRecipe(pagination).then(recipe => {
+            if (recipe == null) {
+                res
+                    .status(statusCode.OK)
+                    .json(success("SIn resultados", null, statusCode.NoContent));
             } else {
                 res
                     .status(statusCode.OK)
@@ -156,4 +250,4 @@ const reactivateRecipe = async (req, res) => {
     }
 };
 
-module.exports = { postRecipe, getAllRecipe, getAllRecipeForAdmin, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };
+module.exports = { postRecipe, getAllRecipe, getMyRecipes, getRecipesFromMyFollowings, getRandomRecipe, getAllRecipeByTitle, getAllRecipeByIngredients, getAllRecipeForAdmin, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };

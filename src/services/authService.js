@@ -51,6 +51,21 @@ const authToken = async (id) => {
             id: id
         }
     });
+
+    const permission = await Permission.findOne({
+        where: {
+            userId: user.dataValues.id
+        }
+    });
+
+    const rol = await Roles.findOne({
+        where: {
+            id: permission.rolId
+        }
+    });
+
+    user.dataValues.permission = rol.dataValues.rol;
+
     if (user) {
         return JSON.parse(JSON.stringify(user, null, 2));
     }

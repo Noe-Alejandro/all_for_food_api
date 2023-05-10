@@ -5,6 +5,6 @@ const { validateJWT } = require('../../middleware/auth/auth');
 
 router
     .post("/", authController.authUser)
-    .post("/test", validateJWT, authController.authToken);
+    .post("/getInfo", validateJWT, authController.authToken);
 
 module.exports = router;
