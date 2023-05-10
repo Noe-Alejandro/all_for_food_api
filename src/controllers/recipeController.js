@@ -38,6 +38,34 @@ const getAllRecipe = (req, res) => {
     }
 };
 
+const getAllRecipeByTitle = (req, res) => {
+    try {
+        var pagination = GetConfigPagination(req);
+
+        return recipeService.getAllRecipeByTitle(req.body.title, pagination).then(recipes => {
+            res
+                .status(statusCode.OK)
+                .json(successPage("OK", recipes.data, statusCode.OK, pagination.header, recipes.totalPage));
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
+const getAllRecipeByIngredients = (req, res) => {
+    try {
+        var pagination = GetConfigPagination(req);
+
+        return recipeService.getAllRecipeByIngredients(req.body.ingredients, pagination).then(recipes => {
+            res
+                .status(statusCode.OK)
+                .json(successPage("OK", recipes.data, statusCode.OK, pagination.header, recipes.totalPage));
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
 const getAllRecipeForAdmin = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -156,4 +184,4 @@ const reactivateRecipe = async (req, res) => {
     }
 };
 
-module.exports = { postRecipe, getAllRecipe, getAllRecipeForAdmin, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };
+module.exports = { postRecipe, getAllRecipe, getAllRecipeByTitle, getAllRecipeByIngredients, getAllRecipeForAdmin, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };

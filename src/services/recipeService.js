@@ -1,6 +1,10 @@
+const Ingredient = require('../database/models/ingredient');
 const Recipe = require('../database/models/recipe');
+const RecipeIngredient = require('../database/models/recipeIngredient');
 const User = require('../database/models/user');
 const { GetRecipeResponse, MapListRecipes } = require('../models/responses/recipe/getRecipe');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 /**
  * 
@@ -41,6 +45,65 @@ const getAllRecipe = async (pagination, status = 1) => {
     },
     ).then(recipes => {
         return JSON.parse(JSON.stringify({ data: MapListRecipes(recipes), totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+    });
+};
+
+const getAllRecipeByTitle = async (title, pagination, status = 1) => {
+    const amount = await Recipe.count({
+        where: {
+            title: {
+                [Op.like]: '%' + title + '%'
+            },
+            status: status
+        }
+    });
+
+    return Recipe.findAll({
+        include: User,
+        where: {
+            title: {
+                [Op.like]: '%' + title + '%'
+            },
+            status: status
+        },
+        limit: pagination.options.limit,
+        offset: pagination.options.offset
+    },
+    ).then(recipes => {
+        return JSON.parse(JSON.stringify({ data: MapListRecipes(recipes), totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+    });
+};
+
+const getAllRecipeByIngredients = async (ingredients, pagination, status = 1) => {
+    const matchAtLessOne = await RecipeIngredient.findAll({
+        attributes: ['recipeId', [Sequelize.fn('COUNT', Sequelize.fn('DISTINCT', Sequelize.col('ingredientId'))), 'countIngredients']
+        ],
+        group: "recipeId",
+        where: {
+            ingredientId: ingredients
+        }
+    });
+
+    var objLstRecipes = JSON.parse(JSON.stringify(matchAtLessOne, null, 2));
+    var lstRecipes = [];
+    objLstRecipes.forEach(recipe => {
+        if(recipe.countIngredients >= ingredients.length){
+            lstRecipes.push(recipe.recipeId);
+        }
+    });
+
+    return Recipe.findAndCountAll({
+        include: [User, Ingredient],
+        where: {
+            id: lstRecipes,
+            status: status
+        },
+        limit: pagination.options.limit,
+        offset: pagination.options.offset
+    },
+    ).then(recipes => {
+        console.log(recipes);
+        return JSON.parse(JSON.stringify({ data: MapListRecipes(recipes.rows), totalPage: Math.ceil(recipes.count / pagination.header.size) }, null, 2));
     });
 };
 
@@ -113,4 +176,4 @@ const reactivateRecipe = async (recipeId) => {
     });
 }
 
-module.exports = { postRecipe, getAllRecipe, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };
+module.exports = { postRecipe, getAllRecipe, getAllRecipeByTitle, getAllRecipeByIngredients, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };
