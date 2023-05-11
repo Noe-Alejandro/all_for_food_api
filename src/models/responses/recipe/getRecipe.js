@@ -1,3 +1,6 @@
+/**
+ * @class GetRecipeResponse : Clase que define la respuesta del Modelo de Recipe para su uso en front
+ */
 class GetRecipeResponse {
     id
     user = {
@@ -28,6 +31,11 @@ class GetRecipeResponse {
     }
 }
 
+/**
+ * 
+ * @param {*} recipes : Receta(s) a mappear
+ * @returns mappedList: Receta(s) mappeada(s) para la implementación de front
+ */
 function MapListRecipes(recipes) {
     const mappedList = [];
     recipes.forEach(recipe => {

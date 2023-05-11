@@ -4,6 +4,24 @@ const Ingredient = require('../models/ingredient');
 const RecipeIngredient = require('../models/recipeIngredient');
 const sequelize = require('../db');
 
+
+/**
+ * Recipe: Modelo que representa la entidad de la base de datos para las recetas
+ * 
+ * @property { INTEGER } id : el identificador de la receta 
+ * @property { INTEGER } userId : el identificador del usuario al que pertenece la receta
+ * @property { STRING } title   : el titulo de la receta
+ * @property { STRING } image : la cadena url de la imagen de portada de la receta
+ * @property { STRING } description : descripción de la receta
+ * @property { STRING } steps : los pasos de elaboración de la receta
+ * @property { DOUBLE } rate : la calificación de la receta
+ * @property {DATE} createdAt : la fecha en la que se creó la receta
+ * @property {DATE} modifiedAt : la fecha en la que se modificó la receta
+ * @property {TINYINT} status : valor de estatus de la receta 1 = activado, 0 = desactivado
+ * 
+ * Belongs to: User
+ * Belongs to Many: Ingredients
+ */
 const Recipe = sequelize.define("recipe",
     {
         id: {

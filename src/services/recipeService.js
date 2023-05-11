@@ -9,8 +9,9 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 /**
+ * Método POST de la receta
  * 
- * @param {*} req : body of the row to be created
+ * @param {*} req : Cuerpo de la tupla a crear en Recipe
  * @returns recipe
  */
 const postRecipe = (req) => {
@@ -29,7 +30,13 @@ const postRecipe = (req) => {
     })
 };
 
-
+/**
+ * Método GET de todas las receta en la tabla
+ * 
+ * @param {*} pagination : Información de la paginación. Determina el número de recetas a devolver
+ * @param {*} status : Estado de actividad/inactividad de la receta
+ * @returns recipes : JSON con la información de las recetas con Status = 1
+ */
 const getAllRecipe = async (pagination, status = 1) => {
     const amount = await Recipe.count({
         where: {
@@ -142,9 +149,11 @@ const getAllRecipeByIngredients = async (ingredients, pagination, status = 1) =>
 };
 
 /**
+ * Método GET de tuplas en Receta con base en su Id
  * 
- * @param {number} recipeId : Identification number of the recipe to find.
- * @returns the recipe asociated to the recipeId if it's activated
+ * @param {number} recipeId : Número de identificación de la receta a encontrar
+ * @param {*} status : Estado de actividad/inactividad de la receta
+ * @returns la receta asociada al id si su estatus es 1
  */
 const getRecipeById = async (recipeId, status = 1) => {
     var recipe = await Recipe.findOne({
@@ -180,10 +189,11 @@ const getRandomRecipe = async (pagination, status = 1) => {
 };
 
 /**
+ * Método PUT de tuplas en Recipe
  * 
- * @param {number} recipeId : Identification number of the recipe to update.
- * @param {*} req : Body of the row to be updated
- * @returns the updated recipe
+ * @param {number} recipeId : Número identificador de la receta a actualizar
+ * @param {*} req : Cuerpo de la tupla a actualizarce
+ * @returns la receta actualizada
  */
 const updateRecipe = async (recipeId, req) => {
     return Recipe.update(
@@ -203,8 +213,10 @@ const updateRecipe = async (recipeId, req) => {
 };
 
 /**
+ * Método PUT del status de una tupla de Recipe con base en su Id para su desactivación
  * 
- * @param {number} recipeId : Identification number of the recipe to deactivate/delete.
+ * @param {number} recipeId : Número identificador de la receta a eliminar (desactivar)
+ * @returns el número de tuplas afectadas
  */
 const deleteRecipe = async (recipeId) => {
     return Recipe.update({ status: 0 }, {
@@ -217,6 +229,12 @@ const deleteRecipe = async (recipeId) => {
     });
 };
 
+/**
+ * Método PUT del status de una tupla de Recipe con base en su Id para su activación
+ * 
+ * @param {number} recipeId : Número identificador de la receta a reactivación
+ * @returns el número de tuplas afectadas
+ */
 const reactivateRecipe = async (recipeId) => {
     return Recipe.update({ status: 1 }, {
         where: {

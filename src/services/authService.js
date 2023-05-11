@@ -3,6 +3,13 @@ const Permission = require('../database/models/permission');
 const Roles = require('../database/models/roles');
 const bcrypt = require("bcryptjs");
 
+/**
+ * Autentifica al usuario checando el email y contraseña ingresados con lo guardado en la DB
+ * 
+ * @param {*} email : coreo del usuario 
+ * @param {*} password : contraseña del usuario 
+ * @returns {Object | null} : Regresa el usuario si la autenticación es exitosa y null si no lo fue
+ */
 const authUser = async (email, password) => {
 
     const user = await User.findOne({
@@ -45,6 +52,11 @@ const authUser = async (email, password) => {
     return JSON.parse(JSON.stringify(user, null, 2));
 }
 
+/**
+ * Genera un token de autentificación con el Id ingresado
+ * @param {*} id : el id del usuario
+ * @returns  {Object | undefined} : el usuario con el token generado o indefinido si no se encuentra al usuario
+ */
 const authToken = async (id) => {
     const user = await User.findOne({
         where: {

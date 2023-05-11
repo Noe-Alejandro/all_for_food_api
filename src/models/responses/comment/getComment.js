@@ -1,3 +1,6 @@
+/**
+ * @class GetCommentResponse : Clase que define la respuesta del Modelo de Comment para su uso en front
+ */
 class GetCommentResponse {
     id;
     recipeId;
@@ -20,6 +23,11 @@ class GetCommentResponse {
     }
 }
 
+/**
+ * 
+ * @param {*} comments : Comentario(s) a mappear
+ * @returns mappedList: Comentario(s) mappeado(s) para la implementación de front
+ */
 function MapListComment(comments) {
     const mappedList = [];
     comments.forEach(comment => {

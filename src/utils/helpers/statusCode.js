@@ -1,3 +1,6 @@
+/**
+ * Enum para statusCode
+ */
 const statusCode = {
     OK: 200,
     Created: 201,

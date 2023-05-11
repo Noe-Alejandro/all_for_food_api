@@ -1,6 +1,14 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
+/**
+ * Score: Modelo que representa la entidad de la base de datos para las calificaciones de una receta
+ *
+ * @property { INTEGER } id : el número identificador de la tupla
+ * @property { INTEGER } userId : el id del usuario calificador
+ * @property { INTEGER } recipeId : el id de la receta a calificar
+ * @property { INTEGER } score : la calificación que un usuario asigna a la receta
+ */
 const Score = sequelize.define("scores",
     {
         id: {

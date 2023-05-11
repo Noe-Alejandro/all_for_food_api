@@ -1,3 +1,6 @@
+/**
+ * @class GetUserResponse : Clase que define la respuesta del Modelo de User para su uso en front
+ */
 class GetUserResponse {
     id;
     username;
@@ -19,6 +22,11 @@ class GetUserResponse {
     }
 }
 
+/**
+ * 
+ * @param {*} users : Usuario(s) a mappear
+ * @returns mappedList: Usuario(s) mappeado(s) para la implementación de front
+ */
 function MapListUser(users) {
     const mappedList = [];
     users.forEach(user => {
