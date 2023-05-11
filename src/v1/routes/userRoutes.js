@@ -8,7 +8,7 @@ router
     .get("/admin/getAll/:status", [validateJWT, validateAdmin], userController.getAllUserForAdmin)
     .post("/", userController.postUser)
     .put("/:id", validateJWT, userController.putUSer)
-    .put("/delete/:id", validateJWT, userController.deleteUser)
+    .put("/delete/:id", [validateJWT, validateAdmin], userController.deleteUser)
     .put("/reactive/:id", [validateJWT, validateAdmin], userController.reactiveUser);
 
 module.exports = router;

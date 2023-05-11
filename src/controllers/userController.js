@@ -114,7 +114,6 @@ const deleteUser = (req, res) => {
         var id = req.params.id;
 
         Validator.ValidateId(id, "El id del usuario es inválido");
-        Validator.ValidateMatchTokenUserId(id, req.data);
 
         return userService.deleteUser(id, body).then(affectedRow => {
             if (affectedRow == null) {

@@ -22,9 +22,9 @@ exports.successPage = (message, results, statusCode, options, totalPage) => {
         message,
         error: false,
         code: statusCode,
-        totalPage: totalPage,
-        page: (options.page+=1),
-        size: (+options.size),
+        totalPage: totalPage == null ? "*" : totalPage,
+        page: (options.page += 1),
+        size: options.size == "*" ? options.size : (+options.size),
         data: results
     };
 };

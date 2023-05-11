@@ -26,7 +26,7 @@ const authUser = async (req, res) => {
         } else {
             return res
                 .status(statusCode.OK)
-                .json(success("User not found", null, statusCode.OK));
+                .json(success("User not found", null, statusCode.NotFound));
         }
     } catch (e) {
         HandlerException(e, res)
