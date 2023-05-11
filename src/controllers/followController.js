@@ -7,6 +7,13 @@ const followService = require('../services/followService');
 const { GetConfigPagination } = require("../utils/helpers/paginatorInit");
 const { MapListUser } = require("../models/responses/user/getUser");
 
+/**
+ * Obtiene la lista de usuarios que un usuario específico sigue
+ * @param {*} req : La información del request: userId, información de paginación
+ * @param {*} res : La respuesta del request
+ * @returns regresa una promesa que se resuelve con la lista de usuarios que el usuario específico sigue
+ * @throws {Error} si ocurre un error mientras recupera la información
+ */
 const getMyFollowings = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -24,6 +31,13 @@ const getMyFollowings = (req, res) => {
     }
 };
 
+/**
+ * Obtiene la lista de usuarios que siguen al usuario específico 
+ * @param {*} req : La información del request: userId, información de paginación
+ * @param {*} res : La respuesta del request
+ * @returns regresa una promesa que se resuelve con la lista de usuarios que siguen al usuario específico 
+ * @throws {Error} si ocurre un error mientras recupera la información
+ */
 const getMyFollowers = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -41,6 +55,12 @@ const getMyFollowers = (req, res) => {
     }
 };
 
+/**
+ * Crea una nueva relación follow entre dos usuarios
+ * @param {*} req : Información del request que contiene información de la relación
+ * @param {*} res : La respuesta del request
+ * @returns regresa una promesa que se resuelve con la información de la nueva relación creada
+ */
 const postFollow = async (req, res) => {
     try {
         var body = req.body;
@@ -66,6 +86,13 @@ const postFollow = async (req, res) => {
     }
 }
 
+/**
+ * Elimina una relación folow entre dos usuarios
+ * 
+ * @param {Object} req : Información del request: userId, followId
+ * @param {Object} res : La respuesta del request
+ * @return regresa una promesa que se resuelve con la información de las tuplas afectadas por la eliminación
+ */
 const deleteFollow = async (req, res) => {
     try {
         var userId = req.params.userId
