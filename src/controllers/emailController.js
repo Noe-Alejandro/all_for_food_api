@@ -5,23 +5,23 @@ require('dotenv').config();
 const { success, error } = require("../utils/helpers/baseResponse");
 const statusCode = require('../utils/helpers/statusCode');
 
-const sendEmail = (req = request, resp = response) => {
+const sendEmailToService = (req = request, resp = response) => {
     let body = req.body;
 
     let config = nodeMailer.createTransport({
         host: nodemailerConf.host,
         post: nodemailerConf.port,
         auth: {
-            user: process.env.USERMAIL,
-            pass: process.env.PASSWORD
+            user: process.env.USERMAIL_HELP,
+            pass: process.env.PASSWORD_HELP
         }
     });
 
     const options = {
         from: nodemailerConf.from,
         subject: body.subject,
-        to: body.email,
-        html: '<p>' + body.message + '</p>',
+        to: "allforfood.service@gmail.com",
+        html: '<p>' + body.message + '</p><br><p>Enviado por ' + body.from + '</p>',
     };
 
     return config.sendMail(options, function (err, result) {
@@ -36,4 +36,4 @@ const sendEmail = (req = request, resp = response) => {
     });
 }
 
-module.exports = { sendEmail };
+module.exports = { sendEmailToService };

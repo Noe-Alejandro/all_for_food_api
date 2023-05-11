@@ -33,8 +33,10 @@ const getMyComments = async (recipeId, userId, pagination) => {
         where: {
             recipeId: recipeId,
             userId: userId
-        }
-    }, pagination.options
+        },
+        limit: pagination.options.limit,
+        offset: pagination.options.offset
+    }
     ).then(comments => {
         return JSON.parse(JSON.stringify({ data: comments, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });

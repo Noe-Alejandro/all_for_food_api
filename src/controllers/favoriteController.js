@@ -4,6 +4,7 @@ const { HandlerException } = require('../utils/helpers/errorHandler');
 
 const statusCode = require('../utils/helpers/statusCode');
 const favoriteService = require('../services/favoriteService');
+const recipeService = require('../services/recipeService');
 const { GetConfigPagination } = require("../utils/helpers/paginatorInit");
 const { MapListFavorite } = require("../models/responses/favorite/getFavorite");
 
@@ -39,6 +40,13 @@ const postFavorite = async (req, res) => {
                 .json(success("Ya has agregado esta receta a favoritos", alreadyFavorite, statusCode.OK));
         }
 
+        var recipeExist = await recipeService.getRecipeById(body.recipeId);
+        if (!recipeExist) {
+            return res
+                .status(statusCode.OK)
+                .json(success("La receta con el id proporcionado no existe", alreadyFavorite, statusCode.NoContent));
+        }
+
         return favoriteService.postFavorite(body).then(favorite => {
             res
                 .status(statusCode.Created)
@@ -63,7 +71,7 @@ const deleteFavorite = async (req, res) => {
         if (!favorite) {
             return res
                 .status(statusCode.OK)
-                .json(success("No se ha encontrado agregado a favorito la receta con el id proporcionado", null, statusCode.OK));
+                .json(success("No se ha encontrado en sus agregados a favoritos la receta con el id proporcionado", null, statusCode.NoContent));
         }
 
         Validator.ValidateOwner(favorite.userId, userId);

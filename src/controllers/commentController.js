@@ -5,6 +5,7 @@ const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
 
 const statusCode = require('../utils/helpers/statusCode');
 const commentService = require('../services/commentService');
+const recipeService = require('../services/recipeService');
 const { MapListComment } = require("../models/responses/comment/getComment");
 
 const getAllComment = (req, res) => {
@@ -44,13 +45,20 @@ const getMyComments = (req, res) => {
     }
 };
 
-const postComment = (req, res) => {
+const postComment = async (req, res) => {
     try {
         var body = req.body;
 
         Validator.ValidateId(body.recipeId, "El id de la receta es inválido");
         Validator.ValidateId(body.userId, "El id del usuario es inválido");
         Validator.ValidateMatchTokenUserId(body.userId, req.data);
+
+        var recipeExist = await recipeService.getRecipeById(body.recipeId);
+        if (recipeExist == null) {
+            return res
+                .status(statusCode.OK)
+                .json(success("La receta con el id proporcionado no existe", null, statusCode.NoContent));
+        }
 
         return commentService.postComment(body).then(comment => {
             res
@@ -75,7 +83,7 @@ const putComment = async (req, res) => {
         if (!comment) {
             return res
                 .status(statusCode.OK)
-                .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
+                .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.NoContent));
         }
 
         Validator.ValidateOwner(comment.userId, body.userId);
@@ -101,7 +109,7 @@ const deleteComment = async (req, res) => {
         if (!comment) {
             return res
                 .status(statusCode.OK)
-                .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.OK));
+                .json(success("No se encontró un comentario con el id proporcionado", null, statusCode.NoContent));
         }
 
         Validator.ValidateOwner(comment.userId, req.data.id);

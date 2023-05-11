@@ -7,7 +7,8 @@ const authUser = async (email, password) => {
 
     const user = await User.findOne({
         where: {
-            email: email
+            email: email,
+            status: 1
         }
     });
     if (!user) {

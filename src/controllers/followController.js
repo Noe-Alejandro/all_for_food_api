@@ -1,9 +1,10 @@
-const { success, successPage } = require("../utils/helpers/baseResponse");
+const { success, successPage, error } = require("../utils/helpers/baseResponse");
 const { Validator } = require('../utils/helpers/validator');
 const { HandlerException } = require('../utils/helpers/errorHandler');
 
 const statusCode = require('../utils/helpers/statusCode');
 const followService = require('../services/followService');
+const userService = require('../services/userService');
 const { GetConfigPagination } = require("../utils/helpers/paginatorInit");
 const { MapListUser } = require("../models/responses/user/getUser");
 
@@ -53,7 +54,14 @@ const postFollow = async (req, res) => {
         if (alreadyFollow) {
             return res
                 .status(statusCode.OK)
-                .json(success("Ya has seguido a este usuario", alreadyFollow, statusCode.OK));
+                .json(success("Ya sigues a este usuario", alreadyFollow, statusCode.OK));
+        }
+
+        var userExist = await userService.getAllUser(body.followId);
+        if (userExist == null) {
+            return res
+                .status(statusCode.OK)
+                .json(success("Usuario con el id proporcionado no fue encontrado", null, statusCode.NotFound));
         }
 
         return followService.postFollow(body).then(follow => {

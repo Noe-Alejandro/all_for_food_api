@@ -3,17 +3,15 @@ const Recipe = require('../database/models/recipe');
 const User = require('../database/models/user');
 
 const getMyFavorites = async (userId, pagination) => {
-    const amount = await Favorite.count({
-        where: {
-            userId: userId
-        },
-    });
-    return Favorite.findAll({
+    return Favorite.findAndCountAll({
         include: [
             {
                 model: Recipe,
                 include: {
                     model: User
+                },
+                where: {
+                    status: 1
                 }
             }
         ],
@@ -25,7 +23,7 @@ const getMyFavorites = async (userId, pagination) => {
     },
     ).then(favorites => {
         if (favorites != null) {
-            return JSON.parse(JSON.stringify({ data: favorites, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+            return JSON.parse(JSON.stringify({ data: favorites.rows, totalPage: Math.ceil(favorites.count / pagination.header.size) }, null, 2));
         }
         return null;
     });

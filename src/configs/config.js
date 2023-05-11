@@ -12,6 +12,7 @@ module.exports = {
     nodemailerConf: {
         host: 'smtp.gmail.com',
         port: 587,
-        from: 'All For Foods'
+        from: 'All For Foods',
+        fromHelp: 'All For Foods Help'
     }
 }
