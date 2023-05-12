@@ -28,6 +28,17 @@ class GetRecipeResponse {
     }
 }
 
+class GetRecipeWithIngredientResponse extends GetRecipeResponse {
+    ingredients = [];
+    constructor(recipe) {
+        super(recipe);
+        this.ingredients = recipe.ingredients.map(x => ["id", "name"].reduce((acc, curr) => {
+            acc[curr] = x[curr];
+            return acc;
+        }, {}));
+    }
+}
+
 function MapListRecipes(recipes) {
     const mappedList = [];
     recipes.forEach(recipe => {
@@ -36,4 +47,4 @@ function MapListRecipes(recipes) {
     return mappedList;
 }
 
-module.exports = { GetRecipeResponse, MapListRecipes };
+module.exports = { GetRecipeResponse, GetRecipeWithIngredientResponse, MapListRecipes };

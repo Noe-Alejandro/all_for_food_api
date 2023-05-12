@@ -4,14 +4,22 @@ const { HandlerException } = require('../utils/helpers/errorHandler');
 
 const statusCode = require('../utils/helpers/statusCode');
 const scoreService = require('../services/scoreService');
+const recipeService = require('../services/recipeService');
 
-const getMyScore = (req, res) => {
+const getMyScore = async (req, res) => {
     try {
         var userId = req.params.userId
         var recipeId = req.params.recipeId;
 
         Validator.ValidateId(recipeId, "El id de la receta es inválido");
         Validator.ValidateId(userId, "El id del usuario es inválido");
+
+        const recipeExist = await recipeService.getRecipeById(recipeId);
+        if (recipeExist == null) {
+            return res
+                .status(statusCode.OK)
+                .json(success("No se encontró el id de la receta proporcionada", null, statusCode.NoContent));
+        }
 
         return scoreService.getMyScore(userId, recipeId).then(result => {
             res
@@ -30,6 +38,13 @@ const postScore = async (req, res) => {
         Validator.ValidateId(body.recipeId, "El id de la receta es inválido");
         Validator.ValidateId(body.userId, "El id del usuario es inválido");
         Validator.ValidateMatchTokenUserId(body.userId, req.data);
+
+        const recipeExist = await recipeService.getRecipeById(body.recipeId);
+        if (recipeExist == null) {
+            return res
+                .status(statusCode.OK)
+                .json(success("No se encontró el id de la receta proporcionada", null, statusCode.NoContent));
+        }
 
         var alreadyScore = await scoreService.getMyScore(body.userId, body.recipeId);
         if (alreadyScore) {
@@ -62,12 +77,12 @@ const putScore = async (req, res) => {
         if (!existScore) {
             return res
                 .status(statusCode.OK)
-                .json(error("No se ha encontrado la puntuación a editar", statusCode.OK));
+                .json(success("No se ha encontrado la puntuación a editar", null, statusCode.NoContent));
         }
 
         Validator.ValidateOwner(existScore.userId, req.data.id);
 
-        return scoreService.putScore(existScore.id, body).then(score => {
+        return scoreService.putScore(existScore.id, body, recipeId).then(score => {
             res
                 .status(statusCode.OK)
                 .json(success("OK", score, statusCode.OK));
@@ -91,12 +106,12 @@ const deleteScore = async (req, res) => {
         if (!score) {
             return res
                 .status(statusCode.OK)
-                .json(success("No se ha encontrado la puntuación", null, statusCode.OK));
+                .json(success("No se ha encontrado la puntuación a eliminar", null, statusCode.NoContent));
         }
 
         Validator.ValidateOwner(score.userId, req.data.id);
 
-        return scoreService.deleteScore(score.id).then(deletedRow => {
+        return scoreService.deleteScore(score.id, recipeId).then(deletedRow => {
             res
                 .status(statusCode.OK)
                 .json(success("OK", deletedRow, statusCode.OK));

@@ -18,7 +18,7 @@ const getAllUser = (req, res) => {
             if (users == null) {
                 res
                     .status(statusCode.OK)
-                    .json(success("No se encontró un usuario con el id proporcionado", null, statusCode.OK));
+                    .json(success("No se encontró un usuario con el id proporcionado", null, statusCode.NoContent));
             } else {
                 res
                     .status(statusCode.OK)
@@ -56,6 +56,11 @@ const postUser = async (req, res) => {
         var body = req.body;
 
         Validator.ValidatePasswordFormat(body.password);
+        if (!body.username || body.username.trim().length === 0) {
+            return res
+                .status(statusCode.BadRequest)
+                .json(error("Debe de ingresar un nombre de usuario", statusCode.BadRequest));
+        }
         var emailInUse = await userService.validateEmailExist(body.email);
         if (emailInUse) {
             return res
