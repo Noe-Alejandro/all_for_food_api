@@ -6,7 +6,7 @@ const statusCode = require('../utils/helpers/statusCode');
 const favoriteService = require('../services/favoriteService');
 const recipeService = require('../services/recipeService');
 const { GetConfigPagination } = require("../utils/helpers/paginatorInit");
-const { MapListFavorite } = require("../models/responses/favorite/getFavorite");
+const { MapListRecipes } = require("../models/responses/recipe/getRecipe");
 
 const getMyFavorites = (req, res) => {
     try {
@@ -18,7 +18,7 @@ const getMyFavorites = (req, res) => {
         return favoriteService.getMyFavorites(userId, pagination).then(result => {
             res
                 .status(statusCode.OK)
-                .json(successPage("OK", MapListFavorite(result.data), statusCode.OK, pagination.header, result.totalPage));
+                .json(successPage("OK", MapListRecipes(result.data.map(x => x.recipe)), statusCode.OK, pagination.header, result.totalPage));
         });
     } catch (e) {
         HandlerException(e, res);
