@@ -29,6 +29,29 @@ const getMyFavorites = async (userId, pagination) => {
     });
 };
 
+const getIsFavoritesByIds = async (userId, recipeIds) => {
+    const recipes = await Favorite.findAll({
+        where: {
+            userId: userId,
+            recipeId: recipeIds
+        }
+    });
+    var recipeLst = JSON.parse(JSON.stringify(recipes, null, 2));
+    var response = [];
+    recipeIds.forEach(item => {
+        var matched = recipeLst.find(x => x.recipeId == item);
+        var isFavorite = true;
+        if (!matched || matched == null) {
+            isFavorite = false
+        }
+        response.push({
+            recipeId: item,
+            isFavorite: isFavorite
+        });
+    });
+    return response;
+};
+
 const getFavorite = async (userId, recipeId) => {
     return Favorite.findOne({
         where: {
@@ -64,4 +87,4 @@ const deleteFavorite = async (id) => {
         );
 }
 
-module.exports = { getMyFavorites, getFavorite, postFavorite, deleteFavorite };
+module.exports = { getMyFavorites, getFavorite, postFavorite, deleteFavorite, getIsFavoritesByIds };

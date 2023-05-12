@@ -25,6 +25,29 @@ const getMyFollowings = (req, res) => {
     }
 };
 
+const getIsFollowByIds = (req, res) => {
+    try {
+        var userId = req.body.userId;
+        var userIds = req.body.userIds;
+
+        Validator.ValidateId(userId, "El id del usuario es inválido");
+
+        if (!userIds | userIds == null) {
+            return res
+                .status(statusCode.BadRequest)
+                .json(success("Se esperaba userIds", null, statusCode.BadRequest));
+        }
+
+        return followService.getIsFollowByUserIds(userId, userIds).then(result => {
+            res
+                .status(statusCode.OK)
+                .json(success("OK", result, statusCode.OK));
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
 const getMyFollowers = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -102,4 +125,4 @@ const deleteFollow = async (req, res) => {
     }
 }
 
-module.exports = { getMyFollowings, getMyFollowers, postFollow, deleteFollow };
+module.exports = { getMyFollowings, getIsFollowByIds, getMyFollowers, postFollow, deleteFollow };

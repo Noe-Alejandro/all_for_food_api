@@ -27,6 +27,29 @@ const getMyFollowings = async (userId, pagination) => {
     });
 };
 
+const getIsFollowByUserIds = async (userId, userIds) => {
+    const follows = await Follow.findAll({
+        where: {
+            userId: userId,
+            followId: userIds
+        }
+    });
+    var followLst = JSON.parse(JSON.stringify(follows, null, 2));
+    var response = [];
+    userIds.forEach(item => {
+        var matched = followLst.find(x => x.followId == item);
+        var isFollow = true;
+        if (!matched || matched == null) {
+            isFollow = false
+        }
+        response.push({
+            userId: item,
+            isFollow: isFollow
+        });
+    });
+    return response;
+};
+
 const getMyFollowers = async (userId, pagination) => {
     return Follow.findAndCountAll({
         include: [{
@@ -88,4 +111,4 @@ const deleteFollow = async (id) => {
         );
 }
 
-module.exports = { getMyFollowings, getMyFollowers, getFollow, postFollow, deleteFollow };
+module.exports = { getMyFollowings, getIsFollowByUserIds, getMyFollowers, getFollow, postFollow, deleteFollow };
