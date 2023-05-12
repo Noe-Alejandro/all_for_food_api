@@ -15,7 +15,12 @@ const postRecipe = (req, res) => {
         Validator.ValidateMatchTokenUserId(body.userId, req.data);
 
         return recipeService.postRecipe(body).then(recipe => {
-            res
+            if (recipe == null) {
+                return res
+                    .status(statusCode.BadRequest)
+                    .json(success("Algún id de los ingredientes proporcionados no se encuentra en la base de datos", null, statusCode.BadRequest));
+            }
+            return res
                 .status(statusCode.Created)
                 .json(success("Created", recipe, statusCode.Created));
         });
@@ -189,14 +194,14 @@ const updateRecipe = async (req, res) => {
         if (!recipe) {
             return res
                 .status(statusCode.OK)
-                .json(success("No se encontró una receta con el id proporcionado o está desactivada", null, statusCode.OK));
+                .json(success("No se encontró una receta con el id proporcionado o está desactivada", null, statusCode.NoContent));
         }
         Validator.ValidateOwner(recipe.user.id, body.userId);
 
         return recipeService.updateRecipe(recipeId, body).then(updatedRow => {
             res
                 .status(statusCode.OK)
-                .json(success("OK", updatedRow, statusCode.OK));
+                .json(success("OK", updatedRow.data, statusCode.OK));
         });
     } catch (e) {
         HandlerException(e, res)
@@ -214,7 +219,7 @@ const deleteRecipe = async (req, res) => {
         if (!recipe) {
             return res
                 .status(statusCode.OK)
-                .json(success("No se encontró una receta con el id proporcionado o ya se encuentra desactivada", null, statusCode.OK));
+                .json(success("No se encontró una receta con el id proporcionado o ya se encuentra desactivada", null, statusCode.NoContent));
         }
 
         return recipeService.deleteRecipe(recipeId).then(deletedRow => {
@@ -237,7 +242,7 @@ const reactivateRecipe = async (req, res) => {
         if (!recipe) {
             return res
                 .status(statusCode.OK)
-                .json(success("No se encontró una receta con el id proporcionado o ya se encuentra activa", null, statusCode.OK));
+                .json(success("No se encontró una receta con el id proporcionado o ya se encuentra activa", null, statusCode.NoContent));
         }
 
         return recipeService.reactivateRecipe(recipeId).then(reactivatedRow => {

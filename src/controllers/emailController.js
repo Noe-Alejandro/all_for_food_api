@@ -21,7 +21,7 @@ const sendEmailToService = (req = request, resp = response) => {
         from: nodemailerConf.from,
         subject: body.subject,
         to: "allforfood.service@gmail.com",
-        html: '<p>' + body.message + '</p><br><p>Enviado por ' + body.from + '</p>',
+        html: '<p>' + body.message + '</p><br><p>Enviado por ' + body.name + ' con el correo de ' + body.from + '</p>',
     };
 
     return config.sendMail(options, function (err, result) {

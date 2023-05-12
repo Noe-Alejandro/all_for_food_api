@@ -25,6 +25,29 @@ const getMyFavorites = (req, res) => {
     }
 };
 
+const getIsFavoritesByIds = (req, res) => {
+    try {
+        var userId = req.body.userId;
+        var recipeIds = req.body.recipeIds;
+
+        Validator.ValidateId(userId, "El id del usuario es inválido");
+
+        if (!recipeIds | recipeIds == null) {
+            return res
+                .status(statusCode.BadRequest)
+                .json(success("Se esperaba recipeIds", null, statusCode.BadRequest));
+        }
+
+        return favoriteService.getIsFavoritesByIds(userId, recipeIds).then(result => {
+            res
+                .status(statusCode.OK)
+                .json(success("OK", result, statusCode.OK));
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
 const postFavorite = async (req, res) => {
     try {
         var body = req.body;
@@ -86,4 +109,4 @@ const deleteFavorite = async (req, res) => {
     }
 }
 
-module.exports = { getMyFavorites, postFavorite, deleteFavorite };
+module.exports = { getMyFavorites, postFavorite, deleteFavorite, getIsFavoritesByIds };
