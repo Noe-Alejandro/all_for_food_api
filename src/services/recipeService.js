@@ -25,11 +25,11 @@ const postRecipe = async (req) => {
         image: req.image,
         description: req.description,
         steps: req.steps,
-        //rate: req.rate,
         createdAt: Date.now(),
         modifiedAt: Date.now(),
         status: 1
     }).then(recipe => {
+        insertRelationIngredientRecipe(recipe.dataValues.id, req.ingredients);
         return recipe;
     })
 };
