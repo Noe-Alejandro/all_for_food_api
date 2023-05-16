@@ -2,7 +2,8 @@ class GetRecipeResponse {
     id
     user = {
         id: null,
-        username: null
+        username: null,
+        icon: null
     };
     title;
     image;
@@ -17,6 +18,7 @@ class GetRecipeResponse {
         this.id = recipe.id;
         this.user.id = recipe.user.id;
         this.user.username = recipe.user.username;
+        this.user.icon = recipe.user.icon;
         this.title = recipe.title;
         this.image = recipe.image;
         this.description = recipe.description;
