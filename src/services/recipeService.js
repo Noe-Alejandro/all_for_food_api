@@ -61,6 +61,14 @@ const getMyRecipes = async (pagination, userId) => {
 
 const getRecipesFromMyFollowings = async (pagination, userId) => {
     const myFollowings = await Follow.findAll({
+        include: [{
+            model: User,
+            as: 'following',
+            foreignKey: 'followId',
+            where: {
+                status: 1
+            }
+        }],
         attributes: ['followId'],
         where: {
             userId: userId
