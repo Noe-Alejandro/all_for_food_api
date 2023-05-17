@@ -2,6 +2,13 @@ const { InvalidIdException, NotMatchTokenUserId, NotOwnerException, InvalidPassw
 const statusCode = require('../helpers/statusCode');
 
 class ExceptionFactory {
+    /**
+     * Crea los mensajes de excepción para cada caso
+     * 
+     * @param {*} exception : El tipo de excepción
+     * @param {*} message : El mensaje de respuesta para la excepción
+     * @returns metadatos del error
+     */
     static create(exception, message) {
         switch (exception) {
             case "InvalidId":

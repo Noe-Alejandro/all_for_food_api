@@ -8,6 +8,13 @@ const commentService = require('../services/commentService');
 const recipeService = require('../services/recipeService');
 const { MapListComment } = require("../models/responses/comment/getComment");
 
+/**
+ * Obtiene todos los comentarios en la receta del request
+ * 
+ * @param {*} req : Información del request: el id de la receta 
+ * @param {*} res : Respuesta del servicio
+* @returns Información de todos los comentarios en la receta
+ */
 const getAllComment = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -25,6 +32,13 @@ const getAllComment = (req, res) => {
     }
 };
 
+/**
+ * Obtiene todos los comentarios del usuario en la receta del request
+ * 
+ * @param {*} req : Información del request: el id del usuario, el id la receta 
+ * @param {*} res : Respuesta del servicio
+* @returns Información de todos los comentarios en la receta hechos por el usuario
+ */
 const getMyComments = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -45,6 +59,13 @@ const getMyComments = (req, res) => {
     }
 };
 
+/**
+ * Crea un comentario
+ * 
+ * @param {*} req : Información del request: el id de la receta 
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de creación
+ */
 const postComment = async (req, res) => {
     try {
         var body = req.body;
@@ -70,6 +91,13 @@ const postComment = async (req, res) => {
     }
 }
 
+/**
+ * Actualiza un comentario con base en su id
+ * 
+ * @param {*} req : Información del request: el id del comentario
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de la actualización
+ */
 const putComment = async (req, res) => {
     try {
         var body = req.body;
@@ -98,6 +126,13 @@ const putComment = async (req, res) => {
     }
 }
 
+/**
+ * Elimina un comentario con base en su id
+ * 
+ * @param {*} req : Información del request: el id del comentario
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de eliminación del comentario
+ */
 const deleteComment = async (req, res) => {
     try {
         var commentId = req.params.commentId;

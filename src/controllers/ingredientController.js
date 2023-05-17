@@ -6,6 +6,13 @@ const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
 const statusCode = require('../utils/helpers/statusCode');
 const ingredientService = require('../services/ingredientService');
 
+/**
+ * Crea un ingrediente
+ * 
+ * @param {*} req : Información del request
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de creación
+ */
 const postIngredient = (req, res) => {
     try {
         var body = req.body;
@@ -20,6 +27,13 @@ const postIngredient = (req, res) => {
     }
 };
 
+/**
+ * Obtiene todos los ingredientes en la DB
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todos los ingredientes
+ */
 const getAllIngredient = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -34,6 +48,13 @@ const getAllIngredient = (req, res) => {
     }
 };
 
+/**
+ * Elimina un ingrediente
+ * 
+ * @param {*} req : Información del request: id del ingrediente
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de la eliminación
+ */
 const deleteIngredient = async (req, res) => {
     try {
         var id = req.params.ingredientId;

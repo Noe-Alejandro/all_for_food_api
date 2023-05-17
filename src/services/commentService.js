@@ -1,6 +1,13 @@
 const Comment = require('../database/models/comment');
 const User = require('../database/models/user');
 
+/**
+ * Obtiene todos los comentarios en la receta del request
+ * 
+ * @param {*} recipeId : El id de la receta
+ * @param {*} pagination : Configuración de paginación
+ * @returns regresa una promesa que se resuelve con un objeto que contiene los comentarios y el número total de páginas
+ */
 const getAllComment = async (recipeId, pagination) => {
     const amount = await Comment.count({
         where: {
@@ -21,6 +28,14 @@ const getAllComment = async (recipeId, pagination) => {
     });
 };
 
+/**
+ * Obtiene todos los comentarios asociados a un usuario en una receta específica
+ * 
+ * @param {*} recipeId : El id de la receta
+ * @param {*} userId : El id del usuario
+ * @param {*} pagination : Configuración de la paginación
+ * @returns regresa una promesa que se resuelve con un objeto que tiene los comentarios y el número de páginas
+ */
 const getMyComments = async (recipeId, userId, pagination) => {
     const amount = await Comment.count({
         where: {
@@ -42,6 +57,11 @@ const getMyComments = async (recipeId, userId, pagination) => {
     });
 };
 
+/**
+ * Método post que crea un nuevo comentario
+ * @param {*} req : Información del request: información del comentario
+ * @returns regresa una promesa que se resuelve con el comentario creado
+ */
 const postComment = (req) => {
     return Comment.create({
         recipeId: req.recipeId,
@@ -54,6 +74,11 @@ const postComment = (req) => {
     });
 };
 
+/**
+ * Método put que actualiza la información de un comentario
+ * @param {*} req : Información del request: id del comentario, información del comentario
+ * @returns regresa una promesa que se resuelve con el comentario actualizado
+ */
 const putComment = async (id, req) => {
     return Comment.update(
         {
@@ -70,6 +95,11 @@ const putComment = async (id, req) => {
         );
 }
 
+/**
+ * Método delete que elimina de un comentario
+ * @param {*} req : Información del request: id del comentario
+ * @returns regresa una promesa que se resuelve con el comentario eliminado
+ */
 const deleteComment = async (id) => {
     const commentEntity = await Comment.findOne({
         where: {
@@ -91,6 +121,11 @@ const deleteComment = async (id) => {
         );
 }
 
+/**
+ * Método get que obtiene un comentario con base en el id proporcionado
+ * @param {*} req : Información del request: id del comentario
+ * @returns regresa una promesa que se resuelve con el comentario al que le pertenece el id, devuelve null si no lo encuentra
+ */
 const getCommentById = async (id) => {
     const commentEntity = await Comment.findOne({
         where: {

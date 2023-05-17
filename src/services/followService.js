@@ -1,6 +1,14 @@
 const Follow = require('../database/models/follow');
 const User = require('../database/models/user');
 
+/**
+ * Obtiene la lista de usuarios que el usuario específico sigue
+ * 
+ * @param {*} userId : el id del usuario seguidor
+ * @param {*} pagination : configuración de la paginación
+ * @returns regresa una promesa que se resuelve con la lista de usuarios que el usuario específico sigue
+ * @throws {Error} si algún error ocurre al recuperar la info
+ */
 const getMyFollowings = async (userId, pagination) => {
     return Follow.findAndCountAll({
         include: [{
@@ -50,6 +58,14 @@ const getIsFollowByUserIds = async (userId, userIds) => {
     return response;
 };
 
+/**
+ * Obtiene la lista de usuarios que siguen al usuario específico 
+ * 
+ * @param {*} userId : el id del usuario al que siguen
+ * @param {*} pagination : configuración de la paginación
+ * @returns regresa una promesa que se resuelve con la lista de usuarios que siguen al usuario específico 
+ * @throws {Error} si algún error ocurre al recuperar la info
+ */
 const getMyFollowers = async (userId, pagination) => {
     return Follow.findAndCountAll({
         include: [{
@@ -76,6 +92,14 @@ const getMyFollowers = async (userId, pagination) => {
     });
 };
 
+/**
+ * Obtiene la información de la relación follow entre dos usuarios
+ * 
+ * @param {*} userId : el id del usuario que sigue
+ * @param {*} followId : el id del usuario que es seguido
+ * @returns regresa una promesa que se resuelve si la relación existe, devuelve null de otra forma
+ * @throws {Error} si algún error ocurre al recuperar la info
+ */
 const getFollow = async (userId, followId) => {
     return Follow.findOne({
         where: {
@@ -91,6 +115,11 @@ const getFollow = async (userId, followId) => {
     });
 };
 
+/**
+ * Crea una nueva tupla en la relación follow entre dos usuarios
+ * @param {*} req : El request con la información de los ids de los usuarios
+ * @returns regresa una promesa que se resuelve con un objeto que representa la nueva relación follow
+ */
 const postFollow = async (req) => {
     const follow = await Follow.create({
         userId: req.userId,
@@ -99,6 +128,11 @@ const postFollow = async (req) => {
     return follow.dataValues;
 };
 
+/**
+ * Elimina una relación follow en la DB
+ * @param {*} id : el id de la tupla de la relación a eliminar
+ * @returns regresa una promesa que se resuelve con el número de tuplas eliminadas
+ */
 const deleteFollow = async (id) => {
     return Follow.destroy(
         {
