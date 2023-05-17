@@ -50,6 +50,12 @@ const getIngredientById = (ingredientId) => {
     })
 };
 
+/**
+ * Elimina un ingrediente con base al id dado
+ * 
+ * @param {*} id : el id del ingrediente a eliminar
+ * @returns una promesa que se resuelve con el resultado de la eliminación
+ */
 const deleteIngredient = async (id) => {
     await RecipeIngredient.destroy({
         where: {

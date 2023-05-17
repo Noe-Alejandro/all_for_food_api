@@ -10,6 +10,7 @@ const { MapListRecipes } = require("../models/responses/recipe/getRecipe");
 
 /**
  * Recupera las recetas favoritas de un usuario en específico y manda una respuesta paginada
+ * 
  * @param {*} req : Información del request
  * @param {*} res : Respuesta del servicio
  * @returns Regresa una promesa que se resuelve con la información paginada de las recetas favoritas o lo rechaza con
@@ -32,6 +33,13 @@ const getMyFavorites = (req, res) => {
     }
 };
 
+/**
+ * Obtiene si las recetas especificadas son favoritas de un usuario
+ * 
+ * @param {*} req : Información del request: userId, recipeIds
+ * @param {*} res : Respuesta del servicio
+ * @returns regresa una promesa que se resuelve con el resultado indicando el estado de favorito de las recetas
+ */
 const getIsFavoritesByIds = (req, res) => {
     try {
         var userId = req.body.userId;
@@ -57,6 +65,7 @@ const getIsFavoritesByIds = (req, res) => {
 
 /**
  * Método post para agregar una receta favorita para el usuario asociado al userId y recipeId
+ * 
  * @param {*} req : Información del request: userId, recipeId
  * @param {*} res : Respuesta del servicio
  * @returns regresa una promesa que se resuelve con la información de la nueva receta favorita o un mensaje de error
@@ -95,6 +104,7 @@ const postFavorite = async (req, res) => {
 
 /**
  * Elimina una receta de la lista de favoritos de acuerdo al id de la receta y el id del usuario
+ * 
  * @param {*} req : Información del request: userId, recipeId
  * @param {*} res : Respuesta del servicio
  * @returns regresa una promesa que se resuelve con la información de la receta eliminada o un mensaje de error

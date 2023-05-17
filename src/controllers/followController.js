@@ -10,6 +10,7 @@ const { MapListUser } = require("../models/responses/user/getUser");
 
 /**
  * Obtiene la lista de usuarios que un usuario específico sigue
+ * 
  * @param {*} req : La información del request: userId, información de paginación
  * @param {*} res : La respuesta del request
  * @returns regresa una promesa que se resuelve con la lista de usuarios que el usuario específico sigue
@@ -33,11 +34,11 @@ const getMyFollowings = (req, res) => {
 };
 
 /**
- * Obtiene la lista de usuarios que siguen al usuario específico 
- * @param {*} req : La información del request: userId, información de paginación
- * @param {*} res : La respuesta del request
- * @returns regresa una promesa que se resuelve con la lista de usuarios que siguen al usuario específico 
- * @throws {Error} si ocurre un error mientras recupera la información
+ * Obtiene si los usuarios especificados son seguidos por el usuario indicado
+ * 
+ * @param {*} req : Información del request: userId, userIds
+ * @param {*} res : Respuesta del servicio
+ * @returns regresa una promesa que se resuelve con el resultado indicando el estado de seguidor del usuario a otros
  */
 const getIsFollowByIds = (req, res) => {
     try {
@@ -62,6 +63,14 @@ const getIsFollowByIds = (req, res) => {
     }
 };
 
+/**
+ * Obtiene la lista de usuarios que siguen al usuario específico 
+ * 
+ * @param {*} req : La información del request: userId, información de paginación
+ * @param {*} res : La respuesta del request
+ * @returns regresa una promesa que se resuelve con la lista de usuarios que siguen al usuario específico 
+ * @throws {Error} si ocurre un error mientras recupera la información
+ */
 const getMyFollowers = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -81,6 +90,7 @@ const getMyFollowers = (req, res) => {
 
 /**
  * Crea una nueva relación follow entre dos usuarios
+ * 
  * @param {*} req : Información del request que contiene información de la relación
  * @param {*} res : La respuesta del request
  * @returns regresa una promesa que se resuelve con la información de la nueva relación creada

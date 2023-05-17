@@ -4,6 +4,7 @@ const User = require('../database/models/user');
 
 /**
  * Obtiene las recetas favoritas de un usuario y las devuelve paginadas
+ * 
  * @param {*} userId : el id del usuario
  * @param {*} pagination : Configuración de la paginación
  * @returns regresa una promesa que se resuelve con las recetas favoritas del usuario y el conteo total de páginas, o regresa
@@ -36,6 +37,13 @@ const getMyFavorites = async (userId, pagination) => {
     });
 };
 
+/**
+ * Obtiene el estado de favorito de las recetas para el usuario especificado
+ * 
+ * @param {*} userId : el id del usuario
+ * @param {*} recipeIds : un array de ids de las recetas a verificar
+ * @returns regresa una promesa que se resuelve con un array de objetos que indican si cada receta es favorito
+ */
 const getIsFavoritesByIds = async (userId, recipeIds) => {
     const recipes = await Favorite.findAll({
         where: {
@@ -61,6 +69,7 @@ const getIsFavoritesByIds = async (userId, recipeIds) => {
 
 /**
  * Obtiene una receta específica de entre los favoritos de acuerdo al id de la receta y del usuario
+ * 
  * @param {*} userId : el id del usuario
  * @param {*} recipeId : el id de la receta
  * @returns regresa una promesa que se resuelve con la receta favorita o null si no se encuentra
@@ -82,6 +91,7 @@ const getFavorite = async (userId, recipeId) => {
 
 /**
  * Crea una nueva receta favorita para un usuario
+ * 
  * @param {*} req : Información del request: userId, recipeId
  * @returns regresa una promesa que se resuelve con la tupla creada para la nueva receta favorita
  */
