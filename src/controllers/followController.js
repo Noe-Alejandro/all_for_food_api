@@ -1,9 +1,10 @@
-const { success, successPage } = require("../utils/helpers/baseResponse");
+const { success, successPage, error } = require("../utils/helpers/baseResponse");
 const { Validator } = require('../utils/helpers/validator');
 const { HandlerException } = require('../utils/helpers/errorHandler');
 
 const statusCode = require('../utils/helpers/statusCode');
 const followService = require('../services/followService');
+const userService = require('../services/userService');
 const { GetConfigPagination } = require("../utils/helpers/paginatorInit");
 const { MapListUser } = require("../models/responses/user/getUser");
 
@@ -38,6 +39,29 @@ const getMyFollowings = (req, res) => {
  * @returns regresa una promesa que se resuelve con la lista de usuarios que siguen al usuario específico 
  * @throws {Error} si ocurre un error mientras recupera la información
  */
+const getIsFollowByIds = (req, res) => {
+    try {
+        var userId = req.body.userId;
+        var userIds = req.body.userIds;
+
+        Validator.ValidateId(userId, "El id del usuario es inválido");
+
+        if (!userIds | userIds == null) {
+            return res
+                .status(statusCode.BadRequest)
+                .json(success("Se esperaba userIds", null, statusCode.BadRequest));
+        }
+
+        return followService.getIsFollowByUserIds(userId, userIds).then(result => {
+            res
+                .status(statusCode.OK)
+                .json(success("OK", result, statusCode.OK));
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
 const getMyFollowers = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -73,7 +97,14 @@ const postFollow = async (req, res) => {
         if (alreadyFollow) {
             return res
                 .status(statusCode.OK)
-                .json(success("Ya has seguido a este usuario", alreadyFollow, statusCode.OK));
+                .json(success("Ya sigues a este usuario", alreadyFollow, statusCode.OK));
+        }
+
+        var userExist = await userService.getAllUser(body.followId);
+        if (userExist == null) {
+            return res
+                .status(statusCode.OK)
+                .json(success("Usuario con el id proporcionado no fue encontrado", null, statusCode.NotFound));
         }
 
         return followService.postFollow(body).then(follow => {
@@ -121,4 +152,4 @@ const deleteFollow = async (req, res) => {
     }
 }
 
-module.exports = { getMyFollowings, getMyFollowers, postFollow, deleteFollow };
+module.exports = { getMyFollowings, getIsFollowByIds, getMyFollowers, postFollow, deleteFollow };

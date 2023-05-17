@@ -5,7 +5,8 @@ class GetRecipeResponse {
     id
     user = {
         id: null,
-        username: null
+        username: null,
+        icon: null
     };
     title;
     image;
@@ -20,6 +21,7 @@ class GetRecipeResponse {
         this.id = recipe.id;
         this.user.id = recipe.user.id;
         this.user.username = recipe.user.username;
+        this.user.icon = recipe.user.icon;
         this.title = recipe.title;
         this.image = recipe.image;
         this.description = recipe.description;
@@ -31,6 +33,16 @@ class GetRecipeResponse {
     }
 }
 
+class GetRecipeWithIngredientResponse extends GetRecipeResponse {
+    ingredients = [];
+    constructor(recipe) {
+        super(recipe);
+        this.ingredients = recipe.ingredients.map(x => ["id", "name"].reduce((acc, curr) => {
+            acc[curr] = x[curr];
+            return acc;
+        }, {}));
+    }
+}
 /**
  * 
  * @param {*} recipes : Receta(s) a mappear
@@ -44,4 +56,4 @@ function MapListRecipes(recipes) {
     return mappedList;
 }
 
-module.exports = { GetRecipeResponse, MapListRecipes };
+module.exports = { GetRecipeResponse, GetRecipeWithIngredientResponse, MapListRecipes };

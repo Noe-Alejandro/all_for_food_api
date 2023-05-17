@@ -4,7 +4,7 @@ const RecipeIngredient = require('../database/models/recipeIngredient');
 const User = require('../database/models/user');
 const Follow = require('../database/models/follow');
 
-const { GetRecipeResponse, MapListRecipes } = require('../models/responses/recipe/getRecipe');
+const { GetRecipeResponse, GetRecipeWithIngredientResponse, MapListRecipes } = require('../models/responses/recipe/getRecipe');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
@@ -14,18 +14,23 @@ const Op = Sequelize.Op;
  * @param {*} req : Cuerpo de la tupla a crear en Recipe
  * @returns recipe
  */
-const postRecipe = (req) => {
+const postRecipe = async (req) => {
+    const exist = await existAllIngredients(req.ingredients);
+    if (!exist) {
+        return null;
+    }
+
     return Recipe.create({
         userId: req.userId,
         title: req.title,
         image: req.image,
         description: req.description,
         steps: req.steps,
-        rate: req.rate,
         createdAt: Date.now(),
         modifiedAt: Date.now(),
         status: 1
     }).then(recipe => {
+        insertRelationIngredientRecipe(recipe.dataValues.id, req.ingredients);
         return recipe;
     })
 };
@@ -63,6 +68,14 @@ const getMyRecipes = async (pagination, userId) => {
 
 const getRecipesFromMyFollowings = async (pagination, userId) => {
     const myFollowings = await Follow.findAll({
+        include: [{
+            model: User,
+            as: 'following',
+            foreignKey: 'followId',
+            where: {
+                status: 1
+            }
+        }],
         attributes: ['followId'],
         where: {
             userId: userId
@@ -157,7 +170,7 @@ const getAllRecipeByIngredients = async (ingredients, pagination, status = 1) =>
  */
 const getRecipeById = async (recipeId, status = 1) => {
     var recipe = await Recipe.findOne({
-        include: User,
+        include: [User, Ingredient],
         where: {
             id: recipeId,
             status: status
@@ -166,13 +179,12 @@ const getRecipeById = async (recipeId, status = 1) => {
     if (!recipe) {
         return null;
     }
-
-    return new GetRecipeResponse(recipe.dataValues);
+    return new GetRecipeWithIngredientResponse(JSON.parse(JSON.stringify(recipe.dataValues, null, 2)));
 };
 
 const getRandomRecipe = async (pagination, status = 1) => {
     return Recipe.findAndCountAll({
-        include: User,
+        include: [User, Ingredient],
         order: Sequelize.literal('rand()'), limit: 1,
         where: {
             status: status
@@ -182,7 +194,7 @@ const getRandomRecipe = async (pagination, status = 1) => {
     },
     ).then(recipes => {
         if (recipes != null && recipes.rows != null) {
-            return new GetRecipeResponse(JSON.parse(JSON.stringify(recipes.rows[0])));
+            return new GetRecipeWithIngredientResponse(JSON.parse(JSON.stringify(recipes.rows[0], null, 2)));
         }
         return null;
     });
@@ -196,6 +208,11 @@ const getRandomRecipe = async (pagination, status = 1) => {
  * @returns la receta actualizada
  */
 const updateRecipe = async (recipeId, req) => {
+    if (!existAllIngredients(req.ingredients)) {
+        console.log("hola null");
+        return null;
+    }
+    const inserted = await insertRelationIngredientRecipe(recipeId, req.ingredients);
     return Recipe.update(
         {
             title: req.title,
@@ -208,7 +225,7 @@ const updateRecipe = async (recipeId, req) => {
             id: recipeId
         }
     }).then(res => {
-        return res[0]
+        return { data: res[0], insertedIngredients: inserted }
     });
 };
 
@@ -244,6 +261,44 @@ const reactivateRecipe = async (recipeId) => {
     }).then(result => {
         return result
     });
+}
+
+async function existAllIngredients(ingredients) {
+    if (ingredients != null && ingredients.length > 0) {
+        const existIngredients = await Ingredient.count({
+            where: {
+                id: ingredients
+            }
+        });
+        if (ingredients.length != existIngredients) {
+            return false;
+        }
+        return true;
+    }
+    return true;
+}
+
+async function insertRelationIngredientRecipe(recipeId, ingredients) {
+    if (ingredients == null) {
+        return null;
+    }
+    await RecipeIngredient.destroy({
+        where: {
+            recipeId: recipeId
+        }
+    });
+    var objectsToInsert = [];
+    ingredients.forEach(item => {
+        objectsToInsert.push({
+            recipeId: recipeId,
+            ingredientId: item
+        });
+    });
+    if (objectsToInsert.length > 0) {
+        await RecipeIngredient.bulkCreate(objectsToInsert);
+        return 1;
+    }
+    return 0;
 }
 
 module.exports = { postRecipe, getAllRecipe, getMyRecipes, getRecipesFromMyFollowings, getRandomRecipe, getAllRecipeByTitle, getAllRecipeByIngredients, getRecipeById, updateRecipe, deleteRecipe, reactivateRecipe };

@@ -4,8 +4,9 @@ const { HandlerException } = require('../utils/helpers/errorHandler');
 
 const statusCode = require('../utils/helpers/statusCode');
 const favoriteService = require('../services/favoriteService');
+const recipeService = require('../services/recipeService');
 const { GetConfigPagination } = require("../utils/helpers/paginatorInit");
-const { MapListFavorite } = require("../models/responses/favorite/getFavorite");
+const { MapListRecipes } = require("../models/responses/recipe/getRecipe");
 
 /**
  * Recupera las recetas favoritas de un usuario en específico y manda una respuesta paginada
@@ -24,7 +25,30 @@ const getMyFavorites = (req, res) => {
         return favoriteService.getMyFavorites(userId, pagination).then(result => {
             res
                 .status(statusCode.OK)
-                .json(successPage("OK", MapListFavorite(result.data), statusCode.OK, pagination.header, result.totalPage));
+                .json(successPage("OK", MapListRecipes(result.data.map(x => x.recipe)), statusCode.OK, pagination.header, result.totalPage));
+        });
+    } catch (e) {
+        HandlerException(e, res);
+    }
+};
+
+const getIsFavoritesByIds = (req, res) => {
+    try {
+        var userId = req.body.userId;
+        var recipeIds = req.body.recipeIds;
+
+        Validator.ValidateId(userId, "El id del usuario es inválido");
+
+        if (!recipeIds | recipeIds == null) {
+            return res
+                .status(statusCode.BadRequest)
+                .json(success("Se esperaba recipeIds", null, statusCode.BadRequest));
+        }
+
+        return favoriteService.getIsFavoritesByIds(userId, recipeIds).then(result => {
+            res
+                .status(statusCode.OK)
+                .json(success("OK", result, statusCode.OK));
         });
     } catch (e) {
         HandlerException(e, res);
@@ -50,6 +74,13 @@ const postFavorite = async (req, res) => {
             return res
                 .status(statusCode.OK)
                 .json(success("Ya has agregado esta receta a favoritos", alreadyFavorite, statusCode.OK));
+        }
+
+        var recipeExist = await recipeService.getRecipeById(body.recipeId);
+        if (!recipeExist) {
+            return res
+                .status(statusCode.OK)
+                .json(success("La receta con el id proporcionado no existe", alreadyFavorite, statusCode.NoContent));
         }
 
         return favoriteService.postFavorite(body).then(favorite => {
@@ -82,7 +113,7 @@ const deleteFavorite = async (req, res) => {
         if (!favorite) {
             return res
                 .status(statusCode.OK)
-                .json(success("No se ha encontrado agregado a favorito la receta con el id proporcionado", null, statusCode.OK));
+                .json(success("No se ha encontrado en sus agregados a favoritos la receta con el id proporcionado", null, statusCode.NoContent));
         }
 
         Validator.ValidateOwner(favorite.userId, userId);
@@ -97,4 +128,4 @@ const deleteFavorite = async (req, res) => {
     }
 }
 
-module.exports = { getMyFavorites, postFavorite, deleteFavorite };
+module.exports = { getMyFavorites, postFavorite, deleteFavorite, getIsFavoritesByIds };

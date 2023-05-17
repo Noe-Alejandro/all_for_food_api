@@ -1,4 +1,4 @@
-const { success } = require("../utils/helpers/baseResponse");
+const { success, successPage } = require("../utils/helpers/baseResponse");
 const { Validator } = require('../utils/helpers/validator');
 const { HandlerException } = require('../utils/helpers/errorHandler');
 const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
@@ -41,7 +41,7 @@ const getAllIngredient = (req, res) => {
         return ingredientService.getAllIngredient(pagination).then(ingredients => {
             res
                 .status(statusCode.OK)
-                .json(success("OK", ingredients.data, statusCode.OK, pagination.header, ingredients.totalPage));
+                .json(successPage("OK", ingredients.data, statusCode.OK, pagination.header, ingredients.totalPage));;
         });
     } catch (e) {
         HandlerException(e, res);

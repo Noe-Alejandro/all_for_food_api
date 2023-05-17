@@ -10,16 +10,14 @@ const User = require('../database/models/user');
  * @throws {Error} si algún error ocurre al recuperar la info
  */
 const getMyFollowings = async (userId, pagination) => {
-    const amount = await Follow.count({
-        where: {
-            userId: userId
-        },
-    });
-    return Follow.findAll({
+    return Follow.findAndCountAll({
         include: [{
             model: User,
             as: 'following',
-            foreignKey: 'followId'
+            foreignKey: 'followId',
+            where: {
+                status: 1
+            }
         }],
         where: {
             userId: userId
@@ -29,12 +27,35 @@ const getMyFollowings = async (userId, pagination) => {
     },
     ).then(followings => {
         if (followings != null) {
-            var responseFollowing = JSON.parse(JSON.stringify(followings, null, 2));
+            var responseFollowing = JSON.parse(JSON.stringify(followings.rows, null, 2));
             var response = responseFollowing.map(item => (item.following));
-            return JSON.parse(JSON.stringify({ data: response, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+            return JSON.parse(JSON.stringify({ data: response, totalPage: Math.ceil(followings.count / pagination.header.size) }, null, 2));
         }
         return null;
     });
+};
+
+const getIsFollowByUserIds = async (userId, userIds) => {
+    const follows = await Follow.findAll({
+        where: {
+            userId: userId,
+            followId: userIds
+        }
+    });
+    var followLst = JSON.parse(JSON.stringify(follows, null, 2));
+    var response = [];
+    userIds.forEach(item => {
+        var matched = followLst.find(x => x.followId == item);
+        var isFollow = true;
+        if (!matched || matched == null) {
+            isFollow = false
+        }
+        response.push({
+            userId: item,
+            isFollow: isFollow
+        });
+    });
+    return response;
 };
 
 /**
@@ -46,16 +67,14 @@ const getMyFollowings = async (userId, pagination) => {
  * @throws {Error} si algún error ocurre al recuperar la info
  */
 const getMyFollowers = async (userId, pagination) => {
-    const amount = await Follow.count({
-        where: {
-            followId: userId
-        },
-    });
-    return Follow.findAll({
+    return Follow.findAndCountAll({
         include: [{
             model: User,
             as: 'follower',
-            foreignKey: 'userId'
+            foreignKey: 'userId',
+            where: {
+                status: 1
+            }
         }],
         where: {
             followId: userId
@@ -65,9 +84,9 @@ const getMyFollowers = async (userId, pagination) => {
     },
     ).then(followers => {
         if (followers != null) {
-            var responseFollwers = JSON.parse(JSON.stringify(followers, null, 2));
+            var responseFollwers = JSON.parse(JSON.stringify(followers.rows, null, 2));
             var response = responseFollwers.map(item => (item.follower));
-            return JSON.parse(JSON.stringify({ data: response, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+            return JSON.parse(JSON.stringify({ data: response, totalPage: Math.ceil(followers.count / pagination.header.size) }, null, 2));
         }
         return null;
     });
@@ -126,4 +145,4 @@ const deleteFollow = async (id) => {
         );
 }
 
-module.exports = { getMyFollowings, getMyFollowers, getFollow, postFollow, deleteFollow };
+module.exports = { getMyFollowings, getIsFollowByUserIds, getMyFollowers, getFollow, postFollow, deleteFollow };

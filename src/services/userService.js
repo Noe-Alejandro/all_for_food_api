@@ -5,15 +5,16 @@ const bcrypt = require("bcryptjs");
 const { GetUserResponse } = require('../models/responses/user/getUser');
 
 const getAllUser = (id) => {
-    return User.findAll({
+    return User.findOne({
         where: {
-            id: id
+            id: id,
+            status: 1
         }
-    }).then(users => {
-        if (users.length == 0) {
+    }).then(user => {
+        if (!user) {
             return null;
         }
-        return JSON.parse(JSON.stringify(new GetUserResponse(users[0]), null, 2));
+        return new GetUserResponse(user.dataValues);
     });
 }
 

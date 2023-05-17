@@ -10,17 +10,15 @@ const User = require('../database/models/user');
  * null si no tiene
  */
 const getMyFavorites = async (userId, pagination) => {
-    const amount = await Favorite.count({
-        where: {
-            userId: userId
-        },
-    });
-    return Favorite.findAll({
+    return Favorite.findAndCountAll({
         include: [
             {
                 model: Recipe,
                 include: {
                     model: User
+                },
+                where: {
+                    status: 1
                 }
             }
         ],
@@ -32,10 +30,33 @@ const getMyFavorites = async (userId, pagination) => {
     },
     ).then(favorites => {
         if (favorites != null) {
-            return JSON.parse(JSON.stringify({ data: favorites, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+            return JSON.parse(JSON.stringify({ data: favorites.rows, totalPage: Math.ceil(favorites.count / pagination.header.size) }, null, 2));
         }
         return null;
     });
+};
+
+const getIsFavoritesByIds = async (userId, recipeIds) => {
+    const recipes = await Favorite.findAll({
+        where: {
+            userId: userId,
+            recipeId: recipeIds
+        }
+    });
+    var recipeLst = JSON.parse(JSON.stringify(recipes, null, 2));
+    var response = [];
+    recipeIds.forEach(item => {
+        var matched = recipeLst.find(x => x.recipeId == item);
+        var isFavorite = true;
+        if (!matched || matched == null) {
+            isFavorite = false
+        }
+        response.push({
+            recipeId: item,
+            isFavorite: isFavorite
+        });
+    });
+    return response;
 };
 
 /**
@@ -90,4 +111,4 @@ const deleteFavorite = async (id) => {
         );
 }
 
-module.exports = { getMyFavorites, getFavorite, postFavorite, deleteFavorite };
+module.exports = { getMyFavorites, getFavorite, postFavorite, deleteFavorite, getIsFavoritesByIds };

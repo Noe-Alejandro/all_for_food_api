@@ -1,4 +1,5 @@
 const Ingredient = require('../database/models/ingredient');
+const RecipeIngredient = require("../database/models/recipeIngredient");
 
 /**
  * Crea un nuevo ingrediente.
@@ -21,14 +22,14 @@ const postIngredient = (req) => {
  * @returns una promesa que se resuelve con los ingredientes obtenidos
  */
 const getAllIngredient = async (pagination) => {
-    const amount = await Ingredient.count();
-
-    return Ingredient.findAll(pagination.options, {
+    return Ingredient.findAndCountAll(pagination.options, {
         where: {
             status: 1
-        }
+        },
+        limit: pagination.options.limit,
+        offset: pagination.options.offset
     }).then(ingredients => {
-        return JSON.parse(JSON.stringify({ data: ingredients, totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
+        return JSON.parse(JSON.stringify({ data: ingredients.rows, totalPage: Math.ceil(ingredients.count / pagination.header.size) }, null, 2));
     });
 }
 
@@ -50,6 +51,11 @@ const getIngredientById = (ingredientId) => {
 };
 
 const deleteIngredient = async (id) => {
+    await RecipeIngredient.destroy({
+        where: {
+            ingredientId: id
+        }
+    });
     return Ingredient.destroy(
         {
             where: {
