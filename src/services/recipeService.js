@@ -54,6 +54,7 @@ const getAllRecipe = async (pagination, status = 1) => {
         where: {
             status: status
         },
+        order: [['modifiedAt', 'DESC']],
         limit: pagination.options.limit,
         offset: pagination.options.offset
     },
@@ -95,6 +96,7 @@ const getByUsersId = async (pagination, usersId) => {
             userId: usersId,
             status: 1
         },
+        order: [['modifiedAt', 'DESC']],
         limit: pagination.options.limit,
         offset: pagination.options.offset
     },
@@ -121,6 +123,7 @@ const getAllRecipeByTitle = async (title, pagination, status = 1) => {
             },
             status: status
         },
+        order: [['modifiedAt', 'DESC']],
         limit: pagination.options.limit,
         offset: pagination.options.offset
     },
@@ -153,6 +156,7 @@ const getAllRecipeByIngredients = async (ingredients, pagination, status = 1) =>
             id: lstRecipes,
             status: status
         },
+        order: [['modifiedAt', 'DESC']],
         limit: pagination.options.limit,
         offset: pagination.options.offset
     },
