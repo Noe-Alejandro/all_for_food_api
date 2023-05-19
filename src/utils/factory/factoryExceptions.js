@@ -1,4 +1,4 @@
-const { InvalidIdException, NotMatchTokenUserId, NotOwnerException, InvalidPasswordFormatException } = require('../exceptions/InvalidIdException');
+const { InvalidIdException, NotMatchTokenUserId, NotOwnerException, InvalidPasswordFormatException } = require('../exceptions/customException');
 const statusCode = require('../helpers/statusCode');
 
 class ExceptionFactory {
