@@ -8,6 +8,14 @@ const userService = require('../services/userService');
 const { GetUserResponse, MapListUser } = require("../models/responses/user/getUser");
 const { GetConfigPagination } = require('../utils/helpers/paginatorInit');
 
+/**
+ * Obtiene todos los usuarios en la DB
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todas los usuarios
+ */
+
 const getAllUser = (req, res) => {
     try {
         var id = req.params.id;
@@ -30,6 +38,14 @@ const getAllUser = (req, res) => {
     }
 };
 
+/**
+ * Obtiene todos los usuarios en la DB desde el admin
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todas los usuarios
+ */
+
 const getAllUserForAdmin = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -50,6 +66,14 @@ const getAllUserForAdmin = (req, res) => {
         HandlerException(e, res);
     }
 };
+
+/**
+ * Crea un usuario
+ * 
+ * @param {*} req : Información del request
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de creación
+ */
 
 const postUser = async (req, res) => {
     try {
@@ -77,6 +101,15 @@ const postUser = async (req, res) => {
         HandlerException(e, res)
     }
 }
+
+/**
+ * Actualiza un usuario con base en su id
+ * 
+ * @param {*} req : Información del request: el id del usuario
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de la actualización
+ */
+
 
 const putUSer = async (req, res) => {
     try {
@@ -113,6 +146,14 @@ const putUSer = async (req, res) => {
     }
 }
 
+/**
+ * Elimina un usuario
+ * 
+ * @param {*} req : Información del request: id del usuario
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de la eliminación
+ */
+
 const deleteUser = (req, res) => {
     try {
         var body = req.body;
@@ -135,6 +176,14 @@ const deleteUser = (req, res) => {
         HandlerException(e, res)
     }
 }
+
+/**
+ * reactiva un usuario previamente eliminado
+ * 
+ * @param {*} req : Información del request
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de la reactivación
+ */
 
 const reactiveUser = (req, res) => {
     try {

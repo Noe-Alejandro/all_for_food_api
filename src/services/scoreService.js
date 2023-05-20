@@ -1,6 +1,14 @@
 const Score = require('../database/models/score');
 const Recipe = require('../database/models/recipe');
 
+/**
+ * Metodo para obtener el puntaje de un uario especifico 
+ * 
+ * @param {*} userId : Numero indentificador del usuario
+ * @param {*} recipeId : Numero indentificador de la receta
+ * @returns El puntaje del usuario
+ */
+
 const getMyScore = async (userId, recipeId) => {
 
     return Score.findOne({
@@ -17,6 +25,12 @@ const getMyScore = async (userId, recipeId) => {
     });
 };
 
+/**
+ * Metodo POST del putaje o score
+ * @param {*} req  :Cuerpo de la tupla a crear en score
+ * @returns score
+ */
+
 const postScore = async (req) => {
     const score = await Score.create({
         userId: req.userId,
@@ -26,6 +40,14 @@ const postScore = async (req) => {
     await updateScoreForRecipe(req.recipeId);
     return score.dataValues;
 };
+
+/**
+ * * Método put que actualiza la información de un score
+ * 
+ * @param {*} id : Número identificador del score a actualizar
+ * @param {*} req : Cuerpo de la tupla a actualizarce
+ * @returns El score actualizado
+ */
 
 const putScore = async (id, req, recipeId) => {
     return Score.update(
@@ -43,6 +65,14 @@ const putScore = async (id, req, recipeId) => {
         );
 }
 
+/**
+ * Metodo para elimiar un score 
+ * 
+ * @param {*} id : Número identificador del score a eliminar
+ * @param {*} recipeId : Número identificador de la receta
+ * @returns El score eliminado
+ */
+
 const deleteScore = async (id, recipeId) => {
     return Score.destroy(
         {
@@ -55,6 +85,11 @@ const deleteScore = async (id, recipeId) => {
         }
         );
 }
+
+/**
+ * Metodo para actualizar un score por el id de la receta
+ * @param {*} recipeId : Número identificador de la receta
+ */
 
 async function updateScoreForRecipe(recipeId) {
     const allScore = await Score.findAndCountAll({

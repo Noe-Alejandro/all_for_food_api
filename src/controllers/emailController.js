@@ -5,6 +5,14 @@ require('dotenv').config();
 const { success, error } = require("../utils/helpers/baseResponse");
 const statusCode = require('../utils/helpers/statusCode');
 
+/**
+ * Envia un email para el servicio al cliente
+ * 
+ * @param {*} req : Información del request
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación del envió del correo
+ */
+
 const sendEmailToService = (req = request, resp = response) => {
     let body = req.body;
 

@@ -6,6 +6,14 @@ const statusCode = require('../utils/helpers/statusCode');
 const scoreService = require('../services/scoreService');
 const recipeService = require('../services/recipeService');
 
+/**
+ * Obtiene la puntuación en la DB del usuario
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de la puntuación
+ */
+
 const getMyScore = async (req, res) => {
     try {
         var userId = req.params.userId
@@ -30,6 +38,14 @@ const getMyScore = async (req, res) => {
         HandlerException(e, res);
     }
 };
+
+/**
+ * Crea una una puntuación
+ * 
+ * @param {*} req : Información del request
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de creación
+ */
 
 const postScore = async (req, res) => {
     try {
@@ -63,6 +79,14 @@ const postScore = async (req, res) => {
     }
 }
 
+/**
+ * Actualiza una puntuación con base en su id
+ * 
+ * @param {*} req : Información del request: el id de la puntuación
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de la actualización
+ */
+
 const putScore = async (req, res) => {
     try {
         var userId = req.params.userId
@@ -91,6 +115,14 @@ const putScore = async (req, res) => {
         HandlerException(e, res)
     }
 }
+
+/**
+ * Elimina una puntuación
+ * 
+ * @param {*} req : Información del request
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de la eliminación
+ */
 
 const deleteScore = async (req, res) => {
     try {
