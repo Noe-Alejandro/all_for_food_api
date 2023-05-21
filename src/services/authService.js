@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 /**
  * Autentifica al usuario checando el email y contraseña ingresados con lo guardado en la DB
  * 
- * @param {*} email : coreo del usuario 
+ * @param {*} email : correo del usuario 
  * @param {*} password : contraseña del usuario 
  * @returns {Object | null} : Regresa el usuario si la autenticación es exitosa y null si no lo fue
  */
@@ -20,6 +20,10 @@ const authUser = async (email, password) => {
     });
     if (!user) {
         return null;
+    }else{
+        if(user.dataValues.email != email){
+            return null;
+        }
     }
     
     var isValidate = await new Promise(function(resolve, reject) {
