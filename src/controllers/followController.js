@@ -99,7 +99,7 @@ const postFollow = async (req, res) => {
     try {
         var body = req.body;
 
-        Validator.ValidateId(body.followId, "El id del usuario a seguir no es inválido");
+        Validator.ValidateId(body.followId, "El id del usuario a seguir no es válido");
         Validator.ValidateId(body.userId, "El id del usuario es inválido");
         Validator.ValidateMatchTokenUserId(body.userId, req.data);
 
