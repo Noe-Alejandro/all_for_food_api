@@ -63,9 +63,25 @@ const getAllRecipe = async (pagination, status = 1) => {
     });
 };
 
+/**
+ * Obtiene todos las recetas asociadas a un usuario específico
+ * 
+ * @param {*} userId : El id del usuario
+ * @param {*} pagination : Configuración de la paginación
+ * @returns recipes : JSON con la información de las recetas del usuario
+ */
+
 const getMyRecipes = async (pagination, userId) => {
     return await getByUsersId(pagination, [userId]);
 };
+
+/**
+ * Obtiene todos las recetas de las cuentas que sigue un usuario en especifico
+ * 
+ * @param {*} userId : El id del usuario
+ * @param {*} pagination : Configuración de la paginación
+ * @returns recipes : JSON con la información de las recetas de las cuentas seguidas
+ */
 
 const getRecipesFromMyFollowings = async (pagination, userId) => {
     const myFollowings = await Follow.findAll({
@@ -88,7 +104,11 @@ const getRecipesFromMyFollowings = async (pagination, userId) => {
     return await getByUsersId(pagination, followings.map(x => x.followId));
 };
 
-
+/**
+ * @param {*} userId : El id del usuario
+ * @param {*} pagination : Configuración de la paginación
+ * @returns recipes : JSON con la información de las recetas de las cuentas seguidas
+ */
 const getByUsersId = async (pagination, usersId) => {
     return Recipe.findAndCountAll({
         include: User,
@@ -104,6 +124,14 @@ const getByUsersId = async (pagination, usersId) => {
         return JSON.parse(JSON.stringify({ data: MapListRecipes(recipes.rows), totalPage: Math.ceil(recipes.count / pagination.header.size) }, null, 2));
     });
 };
+
+/**
+ * Obtiene todos las recetas asociadas a un titulo específico
+ * 
+ * @param {*} userId : El id del usuario
+ * @param {*} status : Estado de actividad/inactividad de la receta
+ * @returns recipes : JSON con la información de las recetas con Status = 1
+ */
 
 const getAllRecipeByTitle = async (title, pagination, status = 1) => {
     const amount = await Recipe.count({
@@ -131,6 +159,14 @@ const getAllRecipeByTitle = async (title, pagination, status = 1) => {
         return JSON.parse(JSON.stringify({ data: MapListRecipes(recipes), totalPage: Math.ceil(amount / pagination.header.size) }, null, 2));
     });
 };
+
+/**
+ * Obtiene todos las recetas asociadas a un titulo específico
+ * 
+ * @param {*} userId : El id del usuario
+ * @param {*} status : Estado de actividad/inactividad de la receta
+ * @returns recipes : JSON con la información de las recetas con Status = 1
+ */
 
 const getAllRecipeByIngredients = async (ingredients, pagination, status = 1) => {
     const matchAtLessOne = await RecipeIngredient.findAll({
@@ -185,6 +221,14 @@ const getRecipeById = async (recipeId, status = 1) => {
     }
     return new GetRecipeWithIngredientResponse(JSON.parse(JSON.stringify(recipe.dataValues, null, 2)));
 };
+
+/**
+ * Obtiene una receta de manera aleatoria
+ * 
+ * @param {*} userId : El id del usuario
+ * @param {*} status : Estado de actividad/inactividad de la receta
+ * @returns recipes : la información de las receta con Status = 1
+ */
 
 const getRandomRecipe = async (pagination, status = 1) => {
     return Recipe.findAndCountAll({
@@ -267,6 +311,13 @@ const reactivateRecipe = async (recipeId) => {
     });
 }
 
+/**
+ * Verifica que los ingredientes de la receta existan
+ * 
+ * @param {*} ingredients  : ingredientes de la receta
+ * @returns : Validación de la existencia de los ingredientes
+ */
+
 async function existAllIngredients(ingredients) {
     if (ingredients != null && ingredients.length > 0) {
         const existIngredients = await Ingredient.count({
@@ -281,6 +332,14 @@ async function existAllIngredients(ingredients) {
     }
     return true;
 }
+
+/**
+ * Inserta una relacion estre la receta y los ingredientes
+ * 
+ * @param {*} recipeId : Número identificador de la receta a reactivación
+ * @param {*} ingredients : ingredientes de la receta
+ * @returns Valor de la respuesta
+ */
 
 async function insertRelationIngredientRecipe(recipeId, ingredients) {
     if (ingredients == null) {

@@ -35,6 +35,13 @@ const getMyFollowings = async (userId, pagination) => {
     });
 };
 
+/**
+ * Obtiene el estado de seguidor de una lista de usuarios especificados para un usuario dado
+ * 
+ * @param {*} userId : el id del usuario
+ * @param {*} userIds : un array de los ids de los usuarios a verificar
+ * @returns regresa una promesa que se resuelve con un array de objetos que indican el estado de follow de cada usuario
+ */
 const getIsFollowByUserIds = async (userId, userIds) => {
     const follows = await Follow.findAll({
         where: {

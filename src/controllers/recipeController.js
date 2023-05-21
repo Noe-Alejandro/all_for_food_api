@@ -7,6 +7,14 @@ const statusCode = require('../utils/helpers/statusCode');
 const recipeService = require('../services/recipeService');
 const { MapListRecipes } = require("../models/responses/recipe/getRecipe");
 
+/**
+ * Crea una receta
+ * 
+ * @param {*} req : Información del request
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de creación
+ */
+
 const postRecipe = (req, res) => {
     try {
         var body = req.body;
@@ -29,6 +37,14 @@ const postRecipe = (req, res) => {
     }
 };
 
+/**
+ * Obtiene todos las recetas en la DB
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todas las recetas
+ */
+
 const getAllRecipe = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -42,6 +58,14 @@ const getAllRecipe = (req, res) => {
         HandlerException(e, res);
     }
 };
+
+/**
+ * Obtiene todos las recetas en la DB por el titulo de la receta
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todas las recetas 
+ */
 
 const getAllRecipeByTitle = (req, res) => {
     try {
@@ -57,6 +81,14 @@ const getAllRecipeByTitle = (req, res) => {
     }
 };
 
+/**
+ * Obtiene todos las recetas en la DB por los ingredientes que tiene la receta
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todas las recetas
+ */
+
 const getAllRecipeByIngredients = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -70,6 +102,14 @@ const getAllRecipeByIngredients = (req, res) => {
         HandlerException(e, res);
     }
 };
+
+/**
+ * Obtiene todos las recetas en la DB desde el admin
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todas las recetas
+ */
 
 const getAllRecipeForAdmin = (req, res) => {
     try {
@@ -92,6 +132,14 @@ const getAllRecipeForAdmin = (req, res) => {
     }
 };
 
+/**
+ * Obtiene una receta en la DB por medio del id
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de una receta
+ */
+
 const getRecipeById = (req, res) => {
     try {
         var recipeId = req.params.recipeId;
@@ -113,6 +161,14 @@ const getRecipeById = (req, res) => {
         HandlerException(e, res);
     }
 };
+
+/**
+ * Obtiene todos las recetas en la DB propias del usuario
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todas las recetas
+ */
 
 const getMyRecipes = (req, res) => {
     try {
@@ -137,6 +193,14 @@ const getMyRecipes = (req, res) => {
     }
 };
 
+/**
+ * Obtiene todos las recetas de las cuentas que sigue el usuario
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todas las recetas
+ */
+
 const getRecipesFromMyFollowings = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -160,6 +224,14 @@ const getRecipesFromMyFollowings = (req, res) => {
     }
 };
 
+/**
+ * Obtiene una receta en la DB de forma aleatoria
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns Información de todas las recetas
+ */
+
 const getRandomRecipe = (req, res) => {
     try {
         var pagination = GetConfigPagination(req);
@@ -179,6 +251,14 @@ const getRandomRecipe = (req, res) => {
         HandlerException(e, res);
     }
 };
+
+/**
+ * Actualiza la informacion de una receta en la DB
+ * 
+ * @param {*} req : Información del request 
+ * @param {*} res : Respuesta del servicio
+ * @returns respuesta de la base de datos
+ */
 
 const updateRecipe = async (req, res) => {
     try {
@@ -208,6 +288,14 @@ const updateRecipe = async (req, res) => {
     }
 };
 
+/**
+ * Elimina una receta
+ * 
+ * @param {*} req : Información del request: id de la receta
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de la eliminación
+ */
+
 const deleteRecipe = async (req, res) => {
     try {
         var recipeId = req.params.recipeId;
@@ -231,6 +319,14 @@ const deleteRecipe = async (req, res) => {
         HandlerException(e, res)
     }
 };
+
+/**
+ * reactiva una receta previamente eliminada
+ * 
+ * @param {*} req : Información del request
+ * @param {*} res : Respuesta del servicio
+ * @returns confirmación de la reactivación
+ */
 
 const reactivateRecipe = async (req, res) => {
     try {

@@ -4,6 +4,13 @@ const Permission = require('../database/models/permission');
 const bcrypt = require("bcryptjs");
 const { GetUserResponse } = require('../models/responses/user/getUser');
 
+/**
+ * * Método GET de todas los usuarios en la tabla
+ * 
+ * @param {*} id : Número identificador del usuario
+ * @returns Un JSON con todos los usuarios
+ */
+
 const getAllUser = (id) => {
     return User.findOne({
         where: {
@@ -17,6 +24,14 @@ const getAllUser = (id) => {
         return new GetUserResponse(user.dataValues);
     });
 }
+
+/**
+ * Metodo para obtener todos los usuarios desde admin
+ * 
+ * @param {*} pagination : Información de la paginación. 
+ * @param {*} status : Estado de actividad/inactividad del usuario
+ * @returns Un JSON con los usuarios
+ */
 
 const getAllUserForAdmin = async (status, pagination) => {
     const amount = await User.count({
@@ -39,6 +54,13 @@ const getAllUserForAdmin = async (status, pagination) => {
     });
 }
 
+/**
+ * Metodo POST para user
+ * 
+ * @param {*} req Cuerpo de la tupla en user
+ * @returns user
+ */
+
 const postUser = async (req) => {
     return User.create({
         username: req.username,
@@ -59,6 +81,13 @@ const postUser = async (req) => {
         });
     });
 };
+
+/**
+ * Metodo para actualizar un usuario
+ * @param {*} id : Número identificador del usuario
+ * @param {*} req : Cuerpo de la tupla en user
+ * @returns User
+ */
 
 const putUser = async (id, req) => {
     const userEntity = await User.findOne({
@@ -103,6 +132,13 @@ const putUser = async (id, req) => {
         );
 }
 
+/**
+ * Metodo para eliminar un usuario
+ * 
+ * @param {*} id : número identificador del usuario
+ * @returns El usuario eliminado
+ */
+
 const deleteUser = async (id) => {
     const userEntity = await User.findOne({
         where: {
@@ -129,6 +165,13 @@ const deleteUser = async (id) => {
         );
 }
 
+
+/**
+ * Metodo para reactivar un usuario previamente eliminado
+ * 
+ * @param {*} id : Número identificador del usuario
+ * @returns User
+ */
 const reactiveUser = async (id) => {
     const userEntity = await User.findOne({
         where: {
@@ -154,6 +197,13 @@ const reactiveUser = async (id) => {
         }
         );
 }
+
+/**
+ * Metodo para validar que el correo del usuario existe
+ * 
+ * @param {*} email : email del usuario
+ * @returns la informacion del usuario
+ */
 
 const validateEmailExist = async (email) => {
     const user = await User.findOne({
